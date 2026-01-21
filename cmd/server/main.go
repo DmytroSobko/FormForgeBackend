@@ -49,4 +49,6 @@ func main() {
 	}
 
 	log.Println("Server stopped gracefully")
+
+	defer database.Close()
 }
