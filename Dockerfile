@@ -8,10 +8,12 @@ RUN apk add --no-cache git
 
 WORKDIR /app
 
-# Copy go.mod and go.sum first (better caching)
-COPY go.mod go.sum ./
-RUN go mod download
+# Copy go.mod first
+COPY go.mod ./
 
+# Copy go.sum only if it exists
+COPY go.sum ./
+RUN go mod download || true
 # Copy the rest of the source
 COPY . .
 
