@@ -1,6 +1,9 @@
 package config
 
-import "os"
+import (
+	"log"
+	"os"
+)
 
 type Config struct {
 	Port        string
@@ -15,7 +18,7 @@ func Load() Config {
 
 	dbURL := os.Getenv("DATABASE_URL")
 	if dbURL == "" {
-		dbURL = "postgres://localhost:5432/formforge"
+		log.Fatal("DATABASE_URL is not set")
 	}
 
 	return Config{

@@ -1,21 +1,15 @@
-version: "3.9"
-
 services:
   api:
     build: .
     ports:
       - "8080:8080"
+    env_file:
+      - .env
     environment:
-      PORT: ":8080"
-      DATABASE_URL: "postgres://postgres:postgres@db:5432/formforge?sslmode=disable"
+      # Override ONLY what differs in Docker
+      DATABASE_URL: postgres://postgres:postgres@db:5432/formforge?sslmode=disable
     depends_on:
       - db
-    healthcheck:
-      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8080/health/ready"]
-      interval: 10s
-      timeout: 2s
-      retries: 5
-      start_period: 5s
 
   db:
     image: postgres:16
