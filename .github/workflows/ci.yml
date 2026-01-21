@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+
+jobs:
+  backend:
+    name: Go Backend Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.25.6"
+
+      - name: Go mod tidy check
+        run: |
+          go mod tidy
+          git diff --exit-code
+
+      - name: Go format check
+        run: |
+          go fmt ./...
+          git diff --exit-code
+
+      - name: Go vet
+        run: go vet ./...
+
+      - name: Run tests
+        run: go test ./...
+
+      - name: Build server
+        run: go build ./cmd/server
+
+      - name: Docker build (sanity check)
+        run: docker build -t formforge-backend .
