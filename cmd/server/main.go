@@ -11,18 +11,45 @@ import (
 
 	"github.com/DmytroSobko/FormForgeBackend/internal/config"
 	"github.com/DmytroSobko/FormForgeBackend/internal/db"
-	apphttp "github.com/DmytroSobko/FormForgeBackend/internal/http"
+	"github.com/DmytroSobko/FormForgeBackend/internal/simulation"
+
+	httpRouter "github.com/DmytroSobko/FormForgeBackend/internal/http"
 )
 
 func main() {
+	configPath := "config/simulation.v1.json"
+
+	simConfig, err := config.LoadSimulationConfig(configPath)
+	if err != nil {
+		log.Fatalf(
+			"failed to load simulation config: %v",
+			err,
+		)
+	}
+
+	simEngine := simulation.NewEngine(
+		&simConfig.Simulation,
+	)
+
+	log.Printf(
+		"Loaded simulation config version %s",
+		simConfig.Version,
+	)
+
 	cfg := config.Load()
 	database := db.Connect(cfg.DatabaseURL)
 
-	router := apphttp.NewRouter(database)
+	router := httpRouter.NewRouter(
+		database,
+		simConfig,
+		simEngine,
+	)
 
 	server := &http.Server{
-		Addr:    cfg.Port,
-		Handler: router,
+		Addr:         cfg.Port,
+		Handler:      router,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
 	}
 
 	// Run server in goroutine

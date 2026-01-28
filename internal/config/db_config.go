@@ -5,12 +5,12 @@ import (
 	"os"
 )
 
-type Config struct {
+type DBConfig struct {
 	Port        string
 	DatabaseURL string
 }
 
-func Load() Config {
+func Load() DBConfig {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = ":8080"
@@ -21,7 +21,7 @@ func Load() Config {
 		log.Fatal("DATABASE_URL is not set")
 	}
 
-	return Config{
+	return DBConfig{
 		Port:        port,
 		DatabaseURL: dbURL,
 	}

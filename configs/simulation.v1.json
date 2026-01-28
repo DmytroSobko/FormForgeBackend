@@ -1,0 +1,14 @@
+{
+  "version": "1.0.0",
+  "simulation": {
+    "daysInWeek": 7,
+    "restDayRecovery": 15.0,
+    "maxFatiguePenalty": 0.7,
+    "highFatigueThreshold": 0.6,
+    "intensityMultipliers": {
+      "low": 0.6,
+      "medium": 1.0,
+      "high": 1.4
+    }
+  }
+}
