@@ -2,8 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ "main", "develop" ]
+    branches: [ main, develop ]
   pull_request:
+    branches: [ main, develop ]
 
 jobs:
   backend:
@@ -19,6 +20,9 @@ jobs:
         with:
           go-version: "1.22"
 
+      - name: Download dependencies
+        run: go mod download
+
       - name: Go mod tidy check
         run: |
           go mod tidy
@@ -32,8 +36,8 @@ jobs:
       - name: Go vet
         run: go vet ./...
 
-      - name: Run tests
-        run: go test ./...
+      - name: Run tests with race detector
+        run: go test -race ./...
 
       - name: Build server
         run: go build ./cmd/server
