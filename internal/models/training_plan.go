@@ -1,5 +1,10 @@
 package models
 
+import (
+	"errors"
+	"fmt"
+)
+
 // TrainingPlan represents a weekly plan consisting of 7 days.
 type TrainingPlan struct {
 	ID        string        `json:"id"`
@@ -29,4 +34,32 @@ func NewEmptyTrainingPlan(id string, athleteID string) TrainingPlan {
 		AthleteID: athleteID,
 		Days:      days,
 	}
+}
+
+func (p TrainingPlan) Validate() error {
+	if p.ID == "" {
+		return errors.New("training plan id cannot be empty")
+	}
+
+	if p.AthleteID == "" {
+		return errors.New("training plan athleteId cannot be empty")
+	}
+
+	if len(p.Days) != DaysInWeek {
+		return errors.New("training plan must contain exactly 7 days")
+	}
+
+	for _, day := range p.Days {
+		if day.DayIndex < 0 || day.DayIndex > DaysInWeek-1 {
+			return fmt.Errorf("invalid day index: %d", day.DayIndex)
+		}
+
+		for _, exercise := range day.Exercises {
+			if err := exercise.Validate(); err != nil {
+				return fmt.Errorf("day %d: %w", day.DayIndex, err)
+			}
+		}
+	}
+
+	return nil
 }

@@ -1,6 +1,10 @@
 package models
 
-import "time"
+import (
+	"errors"
+	"fmt"
+	"time"
+)
 
 type StatSnapshot struct {
 	Strength  float64 `json:"strength"`
@@ -33,4 +37,45 @@ func NewSimulationResult(id string, athleteID string, week int, before StatSnaps
 		Warnings:   warnings,
 		CreatedAt:  time.Now(),
 	}
+}
+
+func (r SimulationResult) Validate() error {
+	if r.ID == "" {
+		return errors.New("simulation result id cannot be empty")
+	}
+
+	if r.AthleteID == "" {
+		return errors.New("simulation result athleteId cannot be empty")
+	}
+
+	if r.Week < 1 {
+		return errors.New("simulation result week must be >= 1")
+	}
+
+	if err := validateStatRange("before.strength", r.Before.Strength); err != nil {
+		return err
+	}
+	if err := validateStatRange("after.strength", r.After.Strength); err != nil {
+		return err
+	}
+
+	if r.Efficiency < 0 {
+		return errors.New("efficiency must be >= 0")
+	}
+
+	return nil
+}
+
+func validateStatRange(name string, value float64) error {
+	if value < 0 || value > 100 {
+		return fmt.Errorf("%s must be between 0 and 100 (got %.2f)", name, value)
+	}
+	return nil
+}
+
+func validateNonNegative(name string, value float64) error {
+	if value < 0 {
+		return fmt.Errorf("%s must be non-negative (got %.2f)", name, value)
+	}
+	return nil
 }
