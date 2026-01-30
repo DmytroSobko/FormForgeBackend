@@ -1,0 +1,44 @@
+{
+  "version": "1.0.0",
+  "athletes": [
+    {
+      "id": "balanced",
+      "displayName": "Balanced Athlete",
+      "description": "Evenly developed across all attributes.",
+      "baseStats": {
+        "strength": 50,
+        "endurance": 50,
+        "mobility": 50
+      },
+      "maxFatigue": 100,
+      "recoveryMultiplier": 1.0,
+      "fatigueSensitivity": 1.0
+    },
+    {
+      "id": "endurance_focused",
+      "displayName": "Endurance-Focused Athlete",
+      "description": "Higher endurance and recovery with stable fatigue accumulation.",
+      "baseStats": {
+        "strength": 40,
+        "endurance": 65,
+        "mobility": 40
+      },
+      "maxFatigue": 105,
+      "recoveryMultiplier": 1.08,
+      "fatigueSensitivity": 0.95
+    },
+    {
+      "id": "strength_focused",
+      "displayName": "Strength-Focused Athlete",
+      "description": "Higher strength output with increased fatigue accumulation.",
+      "baseStats": {
+        "strength": 65,
+        "endurance": 40,
+        "mobility": 40
+      },
+      "maxFatigue": 95,
+      "recoveryMultiplier": 0.95,
+      "fatigueSensitivity": 1.05
+    }
+  ]
+}

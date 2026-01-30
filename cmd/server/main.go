@@ -9,7 +9,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/DmytroSobko/FormForgeBackend/internal/config"
+	"github.com/DmytroSobko/FormForgeBackend/internal/configs"
 	"github.com/DmytroSobko/FormForgeBackend/internal/db"
 	"github.com/DmytroSobko/FormForgeBackend/internal/simulation"
 
@@ -19,7 +19,7 @@ import (
 func main() {
 	configPath := "config/simulation.v1.json"
 
-	simConfig, err := config.LoadSimulationConfig(configPath)
+	simConfig, err := configs.LoadSimulationConfig(configPath)
 	if err != nil {
 		log.Fatalf(
 			"failed to load simulation config: %v",
@@ -36,7 +36,7 @@ func main() {
 		simConfig.Version,
 	)
 
-	cfg := config.Load()
+	cfg := configs.LoadDBConfig()
 	database := db.Connect(cfg.DatabaseURL)
 
 	router := httpRouter.NewRouter(

@@ -3,15 +3,15 @@ package simulation
 import (
 	"math"
 
-	"github.com/DmytroSobko/FormForgeBackend/internal/config"
+	"github.com/DmytroSobko/FormForgeBackend/internal/configs"
 	"github.com/DmytroSobko/FormForgeBackend/internal/models"
 )
 
 type Engine struct {
-	cfg *config.SimulationConfig
+	cfg *configs.SimulationConfig
 }
 
-func NewEngine(cfg *config.SimulationConfig) *Engine {
+func NewEngine(cfg *configs.SimulationConfig) *Engine {
 	return &Engine{
 		cfg: cfg,
 	}

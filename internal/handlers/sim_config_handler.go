@@ -4,15 +4,15 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/DmytroSobko/FormForgeBackend/internal/config"
+	"github.com/DmytroSobko/FormForgeBackend/internal/configs"
 )
 
 type ConfigHandler struct {
-	Simulation *config.SimulationConfigEnvelope
+	Simulation *configs.SimulationConfigEnvelope
 }
 
 func NewConfigHandler(
-	simConfig *config.SimulationConfigEnvelope,
+	simConfig *configs.SimulationConfigEnvelope,
 ) *ConfigHandler {
 	return &ConfigHandler{
 		Simulation: simConfig,
