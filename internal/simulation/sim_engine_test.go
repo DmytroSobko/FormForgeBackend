@@ -3,12 +3,12 @@ package simulation
 import (
 	"testing"
 
-	"github.com/DmytroSobko/FormForgeBackend/internal/config"
+	"github.com/DmytroSobko/FormForgeBackend/internal/configs"
 	"github.com/DmytroSobko/FormForgeBackend/internal/models"
 )
 
-func testConfig() *config.SimulationConfig {
-	return &config.SimulationConfig{
+func testConfig() *configs.SimulationConfig {
+	return &configs.SimulationConfig{
 		DaysInWeek:           7,
 		RestDayRecovery:      15.0,
 		MaxFatiguePenalty:    0.7,

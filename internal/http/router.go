@@ -3,7 +3,7 @@ package http
 import (
 	"net/http"
 
-	"github.com/DmytroSobko/FormForgeBackend/internal/config"
+	"github.com/DmytroSobko/FormForgeBackend/internal/configs"
 	"github.com/DmytroSobko/FormForgeBackend/internal/db"
 	"github.com/DmytroSobko/FormForgeBackend/internal/handlers"
 	"github.com/DmytroSobko/FormForgeBackend/internal/simulation"
@@ -11,7 +11,7 @@ import (
 
 func NewRouter(
 	database *db.DB,
-	simConfig *config.SimulationConfigEnvelope,
+	simConfig *configs.SimulationConfigEnvelope,
 	engine *simulation.Engine,
 ) http.Handler {
 

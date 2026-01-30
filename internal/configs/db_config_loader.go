@@ -1,4 +1,4 @@
-package config
+package configs
 
 import (
 	"log"
@@ -10,7 +10,7 @@ type DBConfig struct {
 	DatabaseURL string
 }
 
-func Load() DBConfig {
+func LoadDBConfig() DBConfig {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = ":8080"

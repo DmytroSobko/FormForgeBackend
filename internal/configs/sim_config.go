@@ -1,6 +1,11 @@
-package config
+package configs
 
 import "errors"
+
+type SimulationConfigEnvelope struct {
+	Version    string           `json:"version"`
+	Simulation SimulationConfig `json:"simulation"`
+}
 
 type SimulationConfig struct {
 	DaysInWeek           int                `json:"daysInWeek"`
@@ -8,11 +13,6 @@ type SimulationConfig struct {
 	MaxFatiguePenalty    float64            `json:"maxFatiguePenalty"`
 	HighFatigueThreshold float64            `json:"highFatigueThreshold"`
 	IntensityMultipliers map[string]float64 `json:"intensityMultipliers"`
-}
-
-type SimulationConfigEnvelope struct {
-	Version    string           `json:"version"`
-	Simulation SimulationConfig `json:"simulation"`
 }
 
 func (c SimulationConfig) Validate() error {

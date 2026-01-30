@@ -1,0 +1,125 @@
+{
+  "version": "1.0.0",
+  "exercises": [
+    {
+      "id": "bench_press",
+      "displayName": "Bench Press",
+      "description": "Pure upper-body strength, moderately taxing.",
+      "primaryStat": "strength",
+      "secondaryStat": null,
+      "secondaryStatWeight": 0.0,
+      "baseGain": 5,
+      "fatigueCost": 12,
+      "durationMinutes": 40,
+      "allowedIntensities": ["medium", "high"]
+    },
+    {
+      "id": "squat",
+      "displayName": "Squat",
+      "description": "Full-body compound lift with high fatigue impact.",
+      "primaryStat": "strength",
+      "secondaryStat": "endurance",
+      "secondaryStatWeight": 0.3,
+      "baseGain": 6,
+      "fatigueCost": 15,
+      "durationMinutes": 45,
+      "allowedIntensities": ["medium", "high"]
+    },
+    {
+      "id": "deadlift",
+      "displayName": "Deadlift",
+      "description": "Heavy posterior-chain strength exercise.",
+      "primaryStat": "strength",
+      "secondaryStat": "mobility",
+      "secondaryStatWeight": 0.2,
+      "baseGain": 7,
+      "fatigueCost": 18,
+      "durationMinutes": 45,
+      "allowedIntensities": ["high"]
+    },
+    {
+      "id": "overhead_press",
+      "displayName": "Overhead Press",
+      "description": "Shoulder and core strength with balance demands.",
+      "primaryStat": "strength",
+      "secondaryStat": "mobility",
+      "secondaryStatWeight": 0.2,
+      "baseGain": 4,
+      "fatigueCost": 10,
+      "durationMinutes": 35,
+      "allowedIntensities": ["medium", "high"]
+    },
+    {
+      "id": "running",
+      "displayName": "Running",
+      "description": "Cardiovascular endurance training.",
+      "primaryStat": "endurance",
+      "secondaryStat": null,
+      "secondaryStatWeight": 0.0,
+      "baseGain": 5,
+      "fatigueCost": 10,
+      "durationMinutes": 30,
+      "allowedIntensities": ["low", "medium"]
+    },
+    {
+      "id": "cycling",
+      "displayName": "Cycling",
+      "description": "Low-impact endurance exercise.",
+      "primaryStat": "endurance",
+      "secondaryStat": "strength",
+      "secondaryStatWeight": 0.2,
+      "baseGain": 4,
+      "fatigueCost": 8,
+      "durationMinutes": 40,
+      "allowedIntensities": ["low", "medium"]
+    },
+    {
+      "id": "rowing",
+      "displayName": "Rowing",
+      "description": "Endurance exercise with upper-body engagement.",
+      "primaryStat": "endurance",
+      "secondaryStat": "strength",
+      "secondaryStatWeight": 0.3,
+      "baseGain": 5,
+      "fatigueCost": 12,
+      "durationMinutes": 35,
+      "allowedIntensities": ["medium"]
+    },
+    {
+      "id": "stretching",
+      "displayName": "Stretching",
+      "description": "Improves flexibility and aids recovery.",
+      "primaryStat": "mobility",
+      "secondaryStat": null,
+      "secondaryStatWeight": 0.0,
+      "baseGain": 3,
+      "fatigueCost": 2,
+      "durationMinutes": 20,
+      "allowedIntensities": ["low"]
+    },
+    {
+      "id": "yoga_flow",
+      "displayName": "Yoga Flow",
+      "description": "Mobility, balance, and light endurance work.",
+      "primaryStat": "mobility",
+      "secondaryStat": "endurance",
+      "secondaryStatWeight": 0.3,
+      "baseGain": 4,
+      "fatigueCost": 5,
+      "durationMinutes": 30,
+      "allowedIntensities": ["low", "medium"]
+    },
+    {
+      "id": "core_stability",
+      "displayName": "Core Stability",
+      "description": "Core strength and movement control.",
+      "primaryStat": "mobility",
+      "secondaryStat": "strength",
+      "secondaryStatWeight": 0.3,
+      "baseGain": 4,
+      "fatigueCost": 6,
+      "durationMinutes": 25,
+      "allowedIntensities": ["low", "medium"]
+    }
+  ]
+}
