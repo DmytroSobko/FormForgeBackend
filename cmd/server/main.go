@@ -27,8 +27,14 @@ func main() {
 		)
 	}
 
+	intensityEnvelope, err := configs.LoadIntensities("configs/intensities.json")
+	if err != nil {
+		log.Fatalf("failed to load intensity config: %v", err)
+	}
+
 	simEngine := simulation.NewEngine(
 		&simConfig.Simulation,
+		intensityEnvelope.Intensities,
 	)
 
 	log.Printf(

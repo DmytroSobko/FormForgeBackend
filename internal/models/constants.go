@@ -1,5 +1,3 @@
 package models
 
-const (
-	DaysInWeek = 7
-)
+const DaysInWeek = 7

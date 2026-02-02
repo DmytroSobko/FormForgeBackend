@@ -11,7 +11,8 @@ type Engine struct {
 	cfg *configs.SimulationConfig
 }
 
-func NewEngine(cfg *configs.SimulationConfig) *Engine {
+func NewEngine(cfg *configs.SimulationConfig,
+	intensities map[models.IntensityType]configs.Intensity) *Engine {
 	return &Engine{
 		cfg: cfg,
 	}
@@ -29,6 +30,8 @@ func (e *Engine) SimulateWeek(
 	warnings := []string{}
 
 	for _, day := range plan.Days {
+
+		// Rest day
 		if len(day.Exercises) == 0 {
 			athlete.Fatigue = math.Max(
 				athlete.Fatigue-e.cfg.RestDayRecovery,
@@ -37,20 +40,23 @@ func (e *Engine) SimulateWeek(
 			continue
 		}
 
-		for _, ex := range day.Exercises {
-			intensity := e.cfg.IntensityMultipliers[string(ex.Intensity)]
+		for _, planned := range day.Exercises {
 
+			ex := planned.Exercise
+			intensityCfg := e.intensities[planned.Intensity]
+
+			fatigueRatio := athlete.Fatigue / athlete.MaxFatigue
 			penalty := math.Min(
-				athlete.Fatigue/athlete.MaxFatigue,
+				fatigueRatio,
 				e.cfg.MaxFatiguePenalty,
 			)
 
-			rawGain := ex.BaseGain * intensity
+			rawGain := ex.BaseGain * intensityCfg.Multiplier
 			finalGain := rawGain * (1 - penalty)
 
 			applyStat(&athlete, ex.PrimaryStat, finalGain)
 
-			athlete.Fatigue += ex.FatigueCost * intensity
+			athlete.Fatigue += ex.FatigueCost * intensityCfg.FatigueMultiplier
 			athlete.Fatigue = math.Min(
 				athlete.Fatigue,
 				athlete.MaxFatigue,

@@ -3,20 +3,35 @@ package simulation
 import (
 	"testing"
 
-	"github.com/DmytroSobko/FormForgeBackend/internal/configs"
-	"github.com/DmytroSobko/FormForgeBackend/internal/models"
+	configs "github.com/DmytroSobko/FormForgeBackend/internal/configs"
+	models "github.com/DmytroSobko/FormForgeBackend/internal/models"
 )
 
-func testConfig() *configs.SimulationConfig {
+// --------------------
+// Test helpers
+// --------------------
+
+func testSimulationConfig() *configs.SimulationConfig {
 	return &configs.SimulationConfig{
-		DaysInWeek:           7,
 		RestDayRecovery:      15.0,
 		MaxFatiguePenalty:    0.7,
 		HighFatigueThreshold: 0.6,
-		IntensityMultipliers: map[string]float64{
-			"low":    0.6,
-			"medium": 1.0,
-			"high":   1.4,
+	}
+}
+
+func testIntensities() map[models.IntensityType]configs.Intensity {
+	return map[models.IntensityType]configs.Intensity{
+		models.IntensityLow: {
+			Multiplier:        0.6,
+			FatigueMultiplier: 0.6,
+		},
+		models.IntensityMedium: {
+			Multiplier:        1.0,
+			FatigueMultiplier: 1.0,
+		},
+		models.IntensityHigh: {
+			Multiplier:        1.4,
+			FatigueMultiplier: 1.4,
 		},
 	}
 }
@@ -33,46 +48,70 @@ func baseAthlete() models.Athlete {
 	}
 }
 
-func simpleTrainingPlan() models.TrainingPlan {
-	days := make([]models.TrainingDay, 7)
+func baseExercise() models.Exercise {
+	return models.Exercise{
+		ID:          "squat",
+		PrimaryStat: models.StatStrength,
+		BaseGain:    5,
+		FatigueCost: 10,
+		AllowedIntensities: []string{
+			"low",
+			"medium",
+			"high",
+		},
+	}
+}
 
-	for i := 0; i < 7; i++ {
+func simpleTrainingPlan() models.TrainingPlan {
+	days := make([]models.TrainingDay, models.DaysInWeek)
+
+	ex := baseExercise()
+
+	for i := 0; i < models.DaysInWeek; i++ {
 		days[i] = models.TrainingDay{
 			DayIndex: i,
-			Exercises: []models.Exercise{
+			Exercises: []models.PlannedExercise{
 				{
-					BaseGain:    5,
-					FatigueCost: 10,
-					Intensity:   models.IntensityMedium,
-					PrimaryStat: models.StatStrength,
+					Exercise:  ex,
+					Intensity: models.IntensityMedium,
 				},
 			},
 		}
 	}
 
-	return models.TrainingPlan{Days: days}
+	return models.TrainingPlan{
+		ID:        "plan-1",
+		AthleteID: "athlete-1",
+		Days:      days,
+	}
 }
 
 func restOnlyPlan() models.TrainingPlan {
-	days := make([]models.TrainingDay, 7)
+	days := make([]models.TrainingDay, models.DaysInWeek)
 
-	for i := 0; i < 7; i++ {
+	for i := 0; i < models.DaysInWeek; i++ {
 		days[i] = models.TrainingDay{
 			DayIndex:  i,
-			Exercises: []models.Exercise{},
+			Exercises: []models.PlannedExercise{},
 		}
 	}
 
-	return models.TrainingPlan{Days: days}
+	return models.TrainingPlan{
+		ID:        "rest-plan",
+		AthleteID: "athlete-1",
+		Days:      days,
+	}
 }
 
-// ------------------------------------------------
+// --------------------
 // Tests
-// ------------------------------------------------
+// --------------------
 
 func TestSimulationIsDeterministic(t *testing.T) {
-	cfg := testConfig()
-	engine := NewEngine(cfg)
+	engine := NewEngine(
+		testSimulationConfig(),
+		testIntensities(),
+	)
 
 	a1 := baseAthlete()
 	a2 := baseAthlete()
@@ -91,8 +130,10 @@ func TestSimulationIsDeterministic(t *testing.T) {
 }
 
 func TestFatigueIncreasesWithTraining(t *testing.T) {
-	cfg := testConfig()
-	engine := NewEngine(cfg)
+	engine := NewEngine(
+		testSimulationConfig(),
+		testIntensities(),
+	)
 
 	athlete := baseAthlete()
 	plan := simpleTrainingPlan()
@@ -105,8 +146,10 @@ func TestFatigueIncreasesWithTraining(t *testing.T) {
 }
 
 func TestRestDayReducesFatigue(t *testing.T) {
-	cfg := testConfig()
-	engine := NewEngine(cfg)
+	engine := NewEngine(
+		testSimulationConfig(),
+		testIntensities(),
+	)
 
 	athlete := baseAthlete()
 	athlete.Fatigue = 50
@@ -119,8 +162,10 @@ func TestRestDayReducesFatigue(t *testing.T) {
 }
 
 func TestHighFatigueReducesEfficiency(t *testing.T) {
-	cfg := testConfig()
-	engine := NewEngine(cfg)
+	engine := NewEngine(
+		testSimulationConfig(),
+		testIntensities(),
+	)
 
 	athlete := baseAthlete()
 	athlete.Fatigue = 90
@@ -133,8 +178,10 @@ func TestHighFatigueReducesEfficiency(t *testing.T) {
 }
 
 func TestHighFatigueWarningTriggered(t *testing.T) {
-	cfg := testConfig()
-	engine := NewEngine(cfg)
+	engine := NewEngine(
+		testSimulationConfig(),
+		testIntensities(),
+	)
 
 	athlete := baseAthlete()
 	athlete.Fatigue = 90

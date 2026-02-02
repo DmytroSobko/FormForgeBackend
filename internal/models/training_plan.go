@@ -14,8 +14,14 @@ type TrainingPlan struct {
 
 // TrainingDay represents a single day of training.
 type TrainingDay struct {
-	DayIndex  int        `json:"dayIndex"` // 0 = Monday, 6 = Sunday
-	Exercises []Exercise `json:"exercises"`
+	DayIndex  int               `json:"dayIndex"` // 0 = Monday, 6 = Sunday
+	Exercises []PlannedExercise `json:"exercises"`
+}
+
+// PlannedExercise represents an exercise scheduled with a chosen intensity.
+type PlannedExercise struct {
+	Exercise  Exercise      `json:"exercise"`
+	Intensity IntensityType `json:"intensity"`
 }
 
 // NewEmptyTrainingPlan creates a plan with 7 empty days.
@@ -25,7 +31,7 @@ func NewEmptyTrainingPlan(id string, athleteID string) TrainingPlan {
 	for i := 0; i < DaysInWeek; i++ {
 		days[i] = TrainingDay{
 			DayIndex:  i,
-			Exercises: []Exercise{},
+			Exercises: []PlannedExercise{},
 		}
 	}
 
@@ -36,6 +42,7 @@ func NewEmptyTrainingPlan(id string, athleteID string) TrainingPlan {
 	}
 }
 
+// Validate ensures the training plan is structurally and logically correct.
 func (p TrainingPlan) Validate() error {
 	if p.ID == "" {
 		return errors.New("training plan id cannot be empty")
@@ -46,7 +53,7 @@ func (p TrainingPlan) Validate() error {
 	}
 
 	if len(p.Days) != DaysInWeek {
-		return errors.New("training plan must contain exactly 7 days")
+		return fmt.Errorf("training plan must contain exactly %d days", DaysInWeek)
 	}
 
 	for _, day := range p.Days {
@@ -54,9 +61,16 @@ func (p TrainingPlan) Validate() error {
 			return fmt.Errorf("invalid day index: %d", day.DayIndex)
 		}
 
-		for _, exercise := range day.Exercises {
-			if err := exercise.Validate(); err != nil {
-				return fmt.Errorf("day %d: %w", day.DayIndex, err)
+		for _, planned := range day.Exercises {
+
+			// Validate exercise definition
+			if err := planned.Exercise.Validate(); err != nil {
+				return fmt.Errorf(
+					"day %d exercise %s: %w",
+					day.DayIndex,
+					planned.Exercise.ID,
+					err,
+				)
 			}
 		}
 	}
