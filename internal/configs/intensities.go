@@ -16,12 +16,12 @@ type Intensity struct {
 	FatigueMultiplier float64 `json:"fatigueMultiplier"`
 }
 
-func (i Intensity) Validate(name string) error {
+func (i Intensity) Validate(intensity models.IntensityType) error {
 	if i.Multiplier <= 0 {
-		return fmt.Errorf("intensity %s: multiplier must be > 0", name)
+		return fmt.Errorf("intensity %s: multiplier must be > 0", intensity)
 	}
 	if i.FatigueMultiplier <= 0 {
-		return fmt.Errorf("intensity %s: fatigueMultiplier must be > 0", name)
+		return fmt.Errorf("intensity %s: fatigueMultiplier must be > 0", intensity)
 	}
 	return nil
 }
