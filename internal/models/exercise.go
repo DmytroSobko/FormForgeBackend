@@ -1,56 +1,25 @@
 package models
 
 import (
-	"errors"
 	"fmt"
 )
 
-type StatType string
-
-const (
-	StatStrength  StatType = "strength"
-	StatEndurance StatType = "endurance"
-	StatMobility  StatType = "mobility"
-)
-
-type IntensityType string
-
-const (
-	IntensityLow    IntensityType = "low"
-	IntensityMedium IntensityType = "medium"
-	IntensityHigh   IntensityType = "high"
-)
-
 type Exercise struct {
-	ID              string        `json:"id"`
-	Name            string        `json:"name"`
-	PrimaryStat     StatType      `json:"primaryStat"`
-	SecondaryStat   *StatType     `json:"secondaryStat,omitempty"`
-	Intensity       IntensityType `json:"intensity"`
-	BaseGain        float64       `json:"baseGain"`
-	FatigueCost     float64       `json:"fatigueCost"`
-	DurationMinutes int           `json:"durationMinutes"`
+	ID                  string    `json:"id"`
+	DisplayName         string    `json:"displayName"`
+	Description         string    `json:"description"`
+	PrimaryStat         StatType  `json:"primaryStat"`
+	SecondaryStat       *StatType `json:"secondaryStat,omitempty"`
+	SecondaryStatWeight float64   `json:"secondaryStatWeight"`
+	BaseGain            float64   `json:"baseGain"`
+	FatigueCost         float64   `json:"fatigueCost"`
+	DurationMinutes     int       `json:"durationMinutes"`
+	AllowedIntensities  []string  `json:"allowedIntensities"`
 }
 
 func (e Exercise) Validate() error {
 	if e.ID == "" {
-		return errors.New("exercise id cannot be empty")
-	}
-
-	if e.Name == "" {
-		return errors.New("exercise name cannot be empty")
-	}
-
-	if e.BaseGain < 0 {
-		return errors.New("baseGain must be >= 0")
-	}
-
-	if e.FatigueCost < 0 {
-		return errors.New("fatigueCost must be >= 0")
-	}
-
-	if e.DurationMinutes <= 0 {
-		return errors.New("durationMinutes must be > 0")
+		return fmt.Errorf("exercise id is empty")
 	}
 
 	switch e.PrimaryStat {
@@ -69,11 +38,24 @@ func (e Exercise) Validate() error {
 		}
 	}
 
-	switch e.Intensity {
-	case IntensityLow, IntensityMedium, IntensityHigh:
-		// ok
-	default:
-		return fmt.Errorf("invalid intensity: %s", e.Intensity)
+	if e.SecondaryStatWeight < 0 || e.SecondaryStatWeight > 1 {
+		return fmt.Errorf("exercise %s: secondaryStatWeight must be [0,1]", e.ID)
+	}
+
+	if e.BaseGain <= 0 {
+		return fmt.Errorf("exercise %s: baseGain must be > 0", e.ID)
+	}
+
+	if e.FatigueCost < 0 {
+		return fmt.Errorf("exercise %s: fatigueCost must be >= 0", e.ID)
+	}
+
+	if e.DurationMinutes <= 0 {
+		return fmt.Errorf("exercise %s: durationMinutes must be > 0", e.ID)
+	}
+
+	if len(e.AllowedIntensities) == 0 {
+		return fmt.Errorf("exercise %s: no allowed intensities", e.ID)
 	}
 
 	return nil

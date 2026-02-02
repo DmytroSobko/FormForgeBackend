@@ -1,10 +1,14 @@
 package configs
 
-import "fmt"
+import (
+	"fmt"
+
+	models "github.com/DmytroSobko/FormForgeBackend/internal/models"
+)
 
 type IntensityEnvelope struct {
-	Version     string               `json:"version"`
-	Intensities map[string]Intensity `json:"intensities"`
+	Version     string                             `json:"version"`
+	Intensities map[models.IntensityType]Intensity `json:"intensities"`
 }
 
 type Intensity struct {

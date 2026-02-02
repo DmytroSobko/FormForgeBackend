@@ -8,7 +8,6 @@ type SimulationConfigEnvelope struct {
 }
 
 type SimulationConfig struct {
-	DaysInWeek           int                `json:"daysInWeek"`
 	RestDayRecovery      float64            `json:"restDayRecovery"`
 	MaxFatiguePenalty    float64            `json:"maxFatiguePenalty"`
 	HighFatigueThreshold float64            `json:"highFatigueThreshold"`
@@ -16,9 +15,6 @@ type SimulationConfig struct {
 }
 
 func (c SimulationConfig) Validate() error {
-	if c.DaysInWeek <= 0 {
-		return errors.New("daysInWeek must be > 0")
-	}
 	if c.RestDayRecovery < 0 {
 		return errors.New("restDayRecovery must be >= 0")
 	}
