@@ -8,7 +8,8 @@ import (
 )
 
 type Engine struct {
-	cfg *configs.SimulationConfig
+	cfg         *configs.SimulationConfig
+	intensities map[models.IntensityType]configs.Intensity
 }
 
 func NewEngine(cfg *configs.SimulationConfig,
