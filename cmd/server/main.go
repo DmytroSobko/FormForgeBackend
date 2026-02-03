@@ -18,24 +18,32 @@ import (
 
 func main() {
 	simConfigPath := "configs/simulation.v1.json"
-
 	simConfig, err := configs.LoadSimulationConfig(simConfigPath)
 	if err != nil {
-		log.Fatalf(
-			"failed to load simulation config: %v",
-			err,
-		)
+		log.Fatalf("failed to load simulation config: %v", err)
 	}
 
-	intConfigPath := "configs/intensities.v1.json"
-	intensityEnvelope, err := configs.LoadIntensities(intConfigPath)
+	athleteTypesConfigPath := "configs/athlete_types.v1.json"
+	athleteTypesConfig, err := configs.LoadAthleteTypes(athleteTypesConfigPath)
+	if err != nil {
+		log.Fatalf("failed to load athlete_types config: %v", err)
+	}
+
+	exercisesConfigPath := "configs/exercises.v1.json"
+	exercisesConfig, err := configs.LoadExercises(exercisesConfigPath)
+	if err != nil {
+		log.Fatalf("failed to load exercises config: %v", err)
+	}
+
+	intensitiesConfigPath := "configs/intensities.v1.json"
+	intensitiesConfig, err := configs.LoadIntensities(intensitiesConfigPath)
 	if err != nil {
 		log.Fatalf("failed to load intensity config: %v", err)
 	}
 
 	simEngine := simulation.NewEngine(
 		&simConfig.Simulation,
-		intensityEnvelope.Intensities,
+		intensitiesConfig.Intensities,
 	)
 
 	log.Printf("Loaded simulation config version %s", simConfig.Version)
@@ -46,6 +54,9 @@ func main() {
 	router := httpRouter.NewRouter(
 		database,
 		simConfig,
+		athleteTypesConfig,
+		exercisesConfig,
+		intensitiesConfig,
 		simEngine,
 	)
 

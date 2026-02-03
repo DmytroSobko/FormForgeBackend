@@ -4,7 +4,7 @@ import (
 	models "github.com/DmytroSobko/FormForgeBackend/internal/models"
 )
 
-type ExerciseEnvelope struct {
+type ExercisesEnvelope struct {
 	Version   string            `json:"version"`
 	Exercises []models.Exercise `json:"exercises"`
 }

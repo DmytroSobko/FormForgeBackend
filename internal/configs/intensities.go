@@ -6,7 +6,7 @@ import (
 	models "github.com/DmytroSobko/FormForgeBackend/internal/models"
 )
 
-type IntensityEnvelope struct {
+type IntensitiesEnvelope struct {
 	Version     string                             `json:"version"`
 	Intensities map[models.IntensityType]Intensity `json:"intensities"`
 }

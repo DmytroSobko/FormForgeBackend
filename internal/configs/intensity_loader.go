@@ -2,8 +2,8 @@ package configs
 
 import "fmt"
 
-func LoadIntensities(path string) (*IntensityEnvelope, error) {
-	var cfg IntensityEnvelope
+func LoadIntensities(path string) (*IntensitiesEnvelope, error) {
+	var cfg IntensitiesEnvelope
 
 	if err := loadJSON(path, &cfg); err != nil {
 		return nil, err

@@ -7,19 +7,19 @@ import (
 	"github.com/DmytroSobko/FormForgeBackend/internal/configs"
 )
 
-type ConfigHandler struct {
+type SimulationConfigHandler struct {
 	Simulation *configs.SimulationConfigEnvelope
 }
 
-func NewConfigHandler(
+func NewSimulationConfigHandler(
 	simConfig *configs.SimulationConfigEnvelope,
-) *ConfigHandler {
-	return &ConfigHandler{
+) *SimulationConfigHandler {
+	return &SimulationConfigHandler{
 		Simulation: simConfig,
 	}
 }
 
-func (h *ConfigHandler) GetSimulationConfig(
+func (h *SimulationConfigHandler) GetSimulationConfig(
 	w http.ResponseWriter,
 	r *http.Request,
 ) {
