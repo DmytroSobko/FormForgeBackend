@@ -15,7 +15,8 @@ type Engine struct {
 func NewEngine(cfg *configs.SimulationConfig,
 	intensities map[models.IntensityType]configs.Intensity) *Engine {
 	return &Engine{
-		cfg: cfg,
+		cfg:         cfg,
+		intensities: intensities,
 	}
 }
 

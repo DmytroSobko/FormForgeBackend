@@ -1,0 +1,27 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Backend (Server)",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/cmd/server",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PORT": ":8080",
+        "DATABASE_URL": "postgres://postgres:postgres@localhost:5432/formforge?sslmode=disable"
+      },
+      "showLog": true
+    },
+    {
+      "name": "Debug Simulation Tests",
+      "type": "go",
+      "request": "launch",
+      "mode": "test",
+      "program": "${workspaceFolder}/internal/simulation",
+      "cwd": "${workspaceFolder}",
+      "showLog": true
+    }
+  ]
+}

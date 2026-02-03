@@ -13,7 +13,7 @@ type DBConfig struct {
 func LoadDBConfig() DBConfig {
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = ":8080"
+		log.Fatal("PORT is not set")
 	}
 
 	dbURL := os.Getenv("DATABASE_URL")
