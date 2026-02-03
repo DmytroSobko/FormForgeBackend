@@ -17,9 +17,9 @@ import (
 )
 
 func main() {
-	configPath := "config/simulation.v1.json"
+	simConfigPath := "configs/simulation.v1.json"
 
-	simConfig, err := configs.LoadSimulationConfig(configPath)
+	simConfig, err := configs.LoadSimulationConfig(simConfigPath)
 	if err != nil {
 		log.Fatalf(
 			"failed to load simulation config: %v",
@@ -27,7 +27,8 @@ func main() {
 		)
 	}
 
-	intensityEnvelope, err := configs.LoadIntensities("configs/intensities.json")
+	intConfigPath := "configs/intensities.v1.json"
+	intensityEnvelope, err := configs.LoadIntensities(intConfigPath)
 	if err != nil {
 		log.Fatalf("failed to load intensity config: %v", err)
 	}
@@ -37,10 +38,7 @@ func main() {
 		intensityEnvelope.Intensities,
 	)
 
-	log.Printf(
-		"Loaded simulation config version %s",
-		simConfig.Version,
-	)
+	log.Printf("Loaded simulation config version %s", simConfig.Version)
 
 	cfg := configs.LoadDBConfig()
 	database := db.Connect(cfg.DatabaseURL)
