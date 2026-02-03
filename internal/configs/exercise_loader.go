@@ -2,8 +2,8 @@ package configs
 
 import "fmt"
 
-func LoadExercises(path string) (*ExerciseEnvelope, error) {
-	var cfg ExerciseEnvelope
+func LoadExercises(path string) (*ExercisesEnvelope, error) {
+	var cfg ExercisesEnvelope
 
 	if err := loadJSON(path, &cfg); err != nil {
 		return nil, err
