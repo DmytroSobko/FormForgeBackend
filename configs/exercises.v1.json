@@ -97,7 +97,8 @@
       "secondaryStat": "endurance",
       "secondaryStatWeight": 0.3,
       "baseGain": 4,
-      "fatigueCost": 5
+      "fatigueCost": 5,
+      "durationMinutes": 25
     },
     {
       "type": "core_stability",
