@@ -13,12 +13,12 @@ func LoadAthleteTypes(path string) (*AthleteTypesEnvelope, error) {
 		return nil, fmt.Errorf("athlete config missing version")
 	}
 
-	ids := map[string]bool{}
-	for _, a := range cfg.Athletes {
-		if ids[a.ID] {
-			return nil, fmt.Errorf("duplicate athlete id: %s", a.ID)
+	types := map[string]bool{}
+	for _, a := range cfg.AthletesTypes {
+		if types[a.Type] {
+			return nil, fmt.Errorf("duplicate athlete type: %s", a.Type)
 		}
-		ids[a.ID] = true
+		types[a.Type] = true
 
 		if err := a.Validate(); err != nil {
 			return nil, err

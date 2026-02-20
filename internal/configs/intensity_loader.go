@@ -13,8 +13,14 @@ func LoadIntensities(path string) (*IntensitiesEnvelope, error) {
 		return nil, fmt.Errorf("intensity config missing version")
 	}
 
-	for name, i := range cfg.Intensities {
-		if err := i.Validate(name); err != nil {
+	types := map[string]bool{}
+	for _, i := range cfg.Intensities {
+		if types[i.Type] {
+			return nil, fmt.Errorf("duplicate intensity type: %s", i.Type)
+		}
+		types[i.Type] = true
+
+		if err := i.Validate(); err != nil {
 			return nil, err
 		}
 	}

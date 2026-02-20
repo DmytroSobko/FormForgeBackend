@@ -1,6 +1,7 @@
 package simulation
 
 import (
+	"fmt"
 	"math"
 
 	"github.com/DmytroSobko/FormForgeBackend/internal/configs"
@@ -9,21 +10,18 @@ import (
 
 type Engine struct {
 	cfg         *configs.SimulationConfig
-	intensities map[models.IntensityType]configs.Intensity
+	intensities []configs.Intensity
 }
 
 func NewEngine(cfg *configs.SimulationConfig,
-	intensities map[models.IntensityType]configs.Intensity) *Engine {
+	intensities []configs.Intensity) *Engine {
 	return &Engine{
 		cfg:         cfg,
 		intensities: intensities,
 	}
 }
 
-func (e *Engine) SimulateWeek(
-	athlete models.Athlete,
-	plan models.TrainingPlan,
-) models.SimulationResult {
+func (e *Engine) SimulateWeek(athlete models.Athlete, plan models.TrainingPlan) (*models.SimulationResult, error) {
 
 	before := snapshot(athlete)
 
@@ -45,13 +43,15 @@ func (e *Engine) SimulateWeek(
 		for _, planned := range day.Exercises {
 
 			ex := planned.Exercise
-			intensityCfg := e.intensities[planned.Intensity]
+
+			intensityCfg, err := getIntensityConfig(planned.Intensity, e.intensities)
+
+			if err != nil {
+				return nil, fmt.Errorf("intensity %s not found", planned.Intensity)
+			}
 
 			fatigueRatio := athlete.Fatigue / athlete.MaxFatigue
-			penalty := math.Min(
-				fatigueRatio,
-				e.cfg.MaxFatiguePenalty,
-			)
+			penalty := math.Min(fatigueRatio, e.cfg.MaxFatiguePenalty)
 
 			rawGain := ex.BaseGain * intensityCfg.Multiplier
 			finalGain := rawGain * (1 - penalty)
@@ -59,10 +59,7 @@ func (e *Engine) SimulateWeek(
 			applyStat(&athlete, ex.PrimaryStat, finalGain)
 
 			athlete.Fatigue += ex.FatigueCost * intensityCfg.FatigueMultiplier
-			athlete.Fatigue = math.Min(
-				athlete.Fatigue,
-				athlete.MaxFatigue,
-			)
+			athlete.Fatigue = math.Min(athlete.Fatigue, athlete.MaxFatigue)
 
 			totalPotential += rawGain
 			totalActual += finalGain
@@ -80,15 +77,9 @@ func (e *Engine) SimulateWeek(
 		efficiency = totalActual / totalPotential
 	}
 
-	return models.NewSimulationResult(
-		"",
-		athlete.ID,
-		athlete.Week,
-		before,
-		after,
-		efficiency,
-		warnings,
-	)
+	simRes := models.NewSimulationResult("", athlete.ID, athlete.Week, before, after, efficiency, warnings)
+
+	return &simRes, nil
 }
 
 func snapshot(a models.Athlete) models.StatSnapshot {
@@ -113,4 +104,13 @@ func applyStat(
 	case models.StatMobility:
 		athlete.Mobility += value
 	}
+}
+
+func getIntensityConfig(intensity string, intensities []configs.Intensity) (*configs.Intensity, error) {
+	for i := range intensities {
+		if intensities[i].Type == intensity {
+			return &intensities[i], nil
+		}
+	}
+	return nil, fmt.Errorf("intensity %s not found", intensity)
 }

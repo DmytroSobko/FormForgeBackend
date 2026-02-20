@@ -8,10 +8,9 @@ type SimulationConfigEnvelope struct {
 }
 
 type SimulationConfig struct {
-	RestDayRecovery      float64            `json:"restDayRecovery"`
-	MaxFatiguePenalty    float64            `json:"maxFatiguePenalty"`
-	HighFatigueThreshold float64            `json:"highFatigueThreshold"`
-	IntensityMultipliers map[string]float64 `json:"intensityMultipliers"`
+	RestDayRecovery      float64 `json:"restDayRecovery"`
+	MaxFatiguePenalty    float64 `json:"maxFatiguePenalty"`
+	HighFatigueThreshold float64 `json:"highFatigueThreshold"`
 }
 
 func (c SimulationConfig) Validate() error {
@@ -23,13 +22,6 @@ func (c SimulationConfig) Validate() error {
 	}
 	if c.HighFatigueThreshold < 0 || c.HighFatigueThreshold > c.MaxFatiguePenalty {
 		return errors.New("highFatigueThreshold must be between 0 and maxFatiguePenalty")
-	}
-
-	required := []string{"low", "medium", "high"}
-	for _, key := range required {
-		if _, ok := c.IntensityMultipliers[key]; !ok {
-			return errors.New("missing intensity multiplier: " + key)
-		}
 	}
 
 	return nil

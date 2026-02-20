@@ -5,7 +5,7 @@ import (
 )
 
 type Exercise struct {
-	ID                  string    `json:"id"`
+	Type                string    `json:"type"`
 	DisplayName         string    `json:"displayName"`
 	Description         string    `json:"description"`
 	PrimaryStat         StatType  `json:"primaryStat"`
@@ -14,12 +14,11 @@ type Exercise struct {
 	BaseGain            float64   `json:"baseGain"`
 	FatigueCost         float64   `json:"fatigueCost"`
 	DurationMinutes     int       `json:"durationMinutes"`
-	AllowedIntensities  []string  `json:"allowedIntensities"`
 }
 
 func (e Exercise) Validate() error {
-	if e.ID == "" {
-		return fmt.Errorf("exercise id is empty")
+	if e.Type == "" {
+		return fmt.Errorf("exercise type is empty")
 	}
 
 	switch e.PrimaryStat {
@@ -39,23 +38,19 @@ func (e Exercise) Validate() error {
 	}
 
 	if e.SecondaryStatWeight < 0 || e.SecondaryStatWeight > 1 {
-		return fmt.Errorf("exercise %s: secondaryStatWeight must be [0,1]", e.ID)
+		return fmt.Errorf("exercise %s: secondaryStatWeight must be [0,1]", e.Type)
 	}
 
 	if e.BaseGain <= 0 {
-		return fmt.Errorf("exercise %s: baseGain must be > 0", e.ID)
+		return fmt.Errorf("exercise %s: baseGain must be > 0", e.Type)
 	}
 
 	if e.FatigueCost < 0 {
-		return fmt.Errorf("exercise %s: fatigueCost must be >= 0", e.ID)
+		return fmt.Errorf("exercise %s: fatigueCost must be >= 0", e.Type)
 	}
 
 	if e.DurationMinutes <= 0 {
-		return fmt.Errorf("exercise %s: durationMinutes must be > 0", e.ID)
-	}
-
-	if len(e.AllowedIntensities) == 0 {
-		return fmt.Errorf("exercise %s: no allowed intensities", e.ID)
+		return fmt.Errorf("exercise %s: durationMinutes must be > 0", e.Type)
 	}
 
 	return nil
