@@ -20,8 +20,8 @@ type TrainingDay struct {
 
 // PlannedExercise represents an exercise scheduled with a chosen intensity.
 type PlannedExercise struct {
-	Exercise  Exercise      `json:"exercise"`
-	Intensity IntensityType `json:"intensity"`
+	Exercise  Exercise `json:"exercise"`
+	Intensity string   `json:"intensity"`
 }
 
 // NewEmptyTrainingPlan creates a plan with 7 empty days.
@@ -68,7 +68,7 @@ func (p TrainingPlan) Validate() error {
 				return fmt.Errorf(
 					"day %d exercise %s: %w",
 					day.DayIndex,
-					planned.Exercise.ID,
+					planned.Exercise.Type,
 					err,
 				)
 			}

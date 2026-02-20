@@ -3,12 +3,12 @@ package configs
 import "fmt"
 
 type AthleteTypesEnvelope struct {
-	Version  string        `json:"version"`
-	Athletes []AthleteType `json:"athletes"`
+	Version       string        `json:"version"`
+	AthletesTypes []AthleteType `json:"athleteTypes"`
 }
 
 type AthleteType struct {
-	ID                 string    `json:"id"`
+	Type               string    `json:"type"`
 	DisplayName        string    `json:"displayName"`
 	Description        string    `json:"description"`
 	BaseStats          StatBlock `json:"baseStats"`
@@ -24,24 +24,24 @@ type StatBlock struct {
 }
 
 func (a AthleteType) Validate() error {
-	if a.ID == "" {
-		return fmt.Errorf("athlete id is empty")
+	if a.Type == "" {
+		return fmt.Errorf("athlete type is empty")
 	}
 
 	if err := a.BaseStats.Validate(); err != nil {
-		return fmt.Errorf("athlete %s: %w", a.ID, err)
+		return fmt.Errorf("athlete %s: %w", a.Type, err)
 	}
 
 	if a.MaxFatigue <= 0 {
-		return fmt.Errorf("athlete %s: maxFatigue must be > 0", a.ID)
+		return fmt.Errorf("athlete %s: maxFatigue must be > 0", a.Type)
 	}
 
 	if a.RecoveryMultiplier <= 0 {
-		return fmt.Errorf("athlete %s: recoveryMultiplier must be > 0", a.ID)
+		return fmt.Errorf("athlete %s: recoveryMultiplier must be > 0", a.Type)
 	}
 
 	if a.FatigueSensitivity <= 0 {
-		return fmt.Errorf("athlete %s: fatigueSensitivity must be > 0", a.ID)
+		return fmt.Errorf("athlete %s: fatigueSensitivity must be > 0", a.Type)
 	}
 
 	return nil

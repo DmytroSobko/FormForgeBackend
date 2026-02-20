@@ -1,17 +1,20 @@
 {
   "version": "1.0.0",
-  "intensities": {
-    "low": {
+  "intensities": [
+    {
+      "type": "low",
       "multiplier": 0.6,
       "fatigueMultiplier": 0.7
     },
-    "medium": {
+    {
+      "type": "medium",
       "multiplier": 1.0,
       "fatigueMultiplier": 1.0
     },
-    "high": {
+    {
+      "type": "high",
       "multiplier": 1.4,
       "fatigueMultiplier": 1.3
     }
-  }
+  ]
 }

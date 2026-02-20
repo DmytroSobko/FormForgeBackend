@@ -48,7 +48,7 @@ func main() {
 
 	log.Printf("Loaded simulation config version %s", simConfig.Version)
 
-	cfg := configs.LoadDBConfig()
+	cfg := db.LoadDBConfig()
 	database := db.Connect(cfg.DatabaseURL)
 
 	router := httpRouter.NewRouter(

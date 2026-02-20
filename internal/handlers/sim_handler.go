@@ -34,10 +34,11 @@ func (h *SimulationHandler) SimulateWeek(
 		return
 	}
 
-	result := h.engine.SimulateWeek(
-		req.Athlete,
-		req.Plan,
-	)
+	result, err := h.engine.SimulateWeek(req.Athlete, req.Plan)
+
+	if err != nil {
+		http.Error(w, "simulation failed", http.StatusInternalServerError)
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(result)

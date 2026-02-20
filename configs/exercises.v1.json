@@ -2,7 +2,7 @@
   "version": "1.0.0",
   "exercises": [
     {
-      "id": "bench_press",
+      "type": "bench_press",
       "displayName": "Bench Press",
       "description": "Pure upper-body strength, moderately taxing.",
       "primaryStat": "strength",
@@ -10,11 +10,10 @@
       "secondaryStatWeight": 0.0,
       "baseGain": 5,
       "fatigueCost": 12,
-      "durationMinutes": 40,
-      "allowedIntensities": ["medium", "high"]
+      "durationMinutes": 40
     },
     {
-      "id": "squat",
+      "type": "squat",
       "displayName": "Squat",
       "description": "Full-body compound lift with high fatigue impact.",
       "primaryStat": "strength",
@@ -22,11 +21,10 @@
       "secondaryStatWeight": 0.3,
       "baseGain": 6,
       "fatigueCost": 15,
-      "durationMinutes": 45,
-      "allowedIntensities": ["medium", "high"]
+      "durationMinutes": 45
     },
     {
-      "id": "deadlift",
+      "type": "deadlift",
       "displayName": "Deadlift",
       "description": "Heavy posterior-chain strength exercise.",
       "primaryStat": "strength",
@@ -34,11 +32,10 @@
       "secondaryStatWeight": 0.2,
       "baseGain": 7,
       "fatigueCost": 18,
-      "durationMinutes": 45,
-      "allowedIntensities": ["high"]
+      "durationMinutes": 45
     },
     {
-      "id": "overhead_press",
+      "type": "overhead_press",
       "displayName": "Overhead Press",
       "description": "Shoulder and core strength with balance demands.",
       "primaryStat": "strength",
@@ -46,11 +43,10 @@
       "secondaryStatWeight": 0.2,
       "baseGain": 4,
       "fatigueCost": 10,
-      "durationMinutes": 35,
-      "allowedIntensities": ["medium", "high"]
+      "durationMinutes": 35
     },
     {
-      "id": "running",
+      "type": "running",
       "displayName": "Running",
       "description": "Cardiovascular endurance training.",
       "primaryStat": "endurance",
@@ -58,11 +54,10 @@
       "secondaryStatWeight": 0.0,
       "baseGain": 5,
       "fatigueCost": 10,
-      "durationMinutes": 30,
-      "allowedIntensities": ["low", "medium"]
+      "durationMinutes": 30
     },
     {
-      "id": "cycling",
+      "type": "cycling",
       "displayName": "Cycling",
       "description": "Low-impact endurance exercise.",
       "primaryStat": "endurance",
@@ -70,11 +65,10 @@
       "secondaryStatWeight": 0.2,
       "baseGain": 4,
       "fatigueCost": 8,
-      "durationMinutes": 40,
-      "allowedIntensities": ["low", "medium"]
+      "durationMinutes": 40
     },
     {
-      "id": "rowing",
+      "type": "rowing",
       "displayName": "Rowing",
       "description": "Endurance exercise with upper-body engagement.",
       "primaryStat": "endurance",
@@ -82,11 +76,10 @@
       "secondaryStatWeight": 0.3,
       "baseGain": 5,
       "fatigueCost": 12,
-      "durationMinutes": 35,
-      "allowedIntensities": ["medium"]
+      "durationMinutes": 35
     },
     {
-      "id": "stretching",
+      "type": "stretching",
       "displayName": "Stretching",
       "description": "Improves flexibility and aids recovery.",
       "primaryStat": "mobility",
@@ -94,23 +87,20 @@
       "secondaryStatWeight": 0.0,
       "baseGain": 3,
       "fatigueCost": 2,
-      "durationMinutes": 20,
-      "allowedIntensities": ["low"]
+      "durationMinutes": 20
     },
     {
-      "id": "yoga_flow",
+      "type": "yoga_flow",
       "displayName": "Yoga Flow",
       "description": "Mobility, balance, and light endurance work.",
       "primaryStat": "mobility",
       "secondaryStat": "endurance",
       "secondaryStatWeight": 0.3,
       "baseGain": 4,
-      "fatigueCost": 5,
-      "durationMinutes": 30,
-      "allowedIntensities": ["low", "medium"]
+      "fatigueCost": 5
     },
     {
-      "id": "core_stability",
+      "type": "core_stability",
       "displayName": "Core Stability",
       "description": "Core strength and movement control.",
       "primaryStat": "mobility",
@@ -118,8 +108,7 @@
       "secondaryStatWeight": 0.3,
       "baseGain": 4,
       "fatigueCost": 6,
-      "durationMinutes": 25,
-      "allowedIntensities": ["low", "medium"]
+      "durationMinutes": 25
     }
   ]
 }

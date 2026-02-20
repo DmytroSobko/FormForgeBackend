@@ -13,12 +13,12 @@ func LoadExercises(path string) (*ExercisesEnvelope, error) {
 		return nil, fmt.Errorf("exercise config missing version")
 	}
 
-	ids := map[string]bool{}
+	types := map[string]bool{}
 	for _, e := range cfg.Exercises {
-		if ids[e.ID] {
-			return nil, fmt.Errorf("duplicate exercise id: %s", e.ID)
+		if types[e.Type] {
+			return nil, fmt.Errorf("duplicate exercise id: %s", e.Type)
 		}
-		ids[e.ID] = true
+		types[e.Type] = true
 
 		if err := e.Validate(); err != nil {
 			return nil, err

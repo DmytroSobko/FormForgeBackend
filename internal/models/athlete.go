@@ -4,6 +4,7 @@ import "errors"
 
 type Athlete struct {
 	ID         string  `json:"id"`
+	Type       string  `json:"type"`
 	Name       string  `json:"name"`
 	Strength   float64 `json:"strength"`
 	Endurance  float64 `json:"endurance"`
