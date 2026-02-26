@@ -10,7 +10,11 @@
       "secondaryStatWeight": 0.0,
       "baseGain": 5,
       "fatigueCost": 12,
-      "durationMinutes": 40
+      "durationMinutes": 40,
+      "allowedIntesities": [
+        "low",
+        "high"
+      ]
     },
     {
       "type": "squat",
@@ -21,7 +25,11 @@
       "secondaryStatWeight": 0.3,
       "baseGain": 6,
       "fatigueCost": 15,
-      "durationMinutes": 45
+      "durationMinutes": 45,
+      "allowedIntesities": [
+        "medium",
+        "high"
+      ]
     },
     {
       "type": "deadlift",
@@ -32,7 +40,11 @@
       "secondaryStatWeight": 0.2,
       "baseGain": 7,
       "fatigueCost": 18,
-      "durationMinutes": 45
+      "durationMinutes": 45,
+      "allowedIntesities": [
+        "low",
+        "high"
+      ]
     },
     {
       "type": "overhead_press",
@@ -43,7 +55,11 @@
       "secondaryStatWeight": 0.2,
       "baseGain": 4,
       "fatigueCost": 10,
-      "durationMinutes": 35
+      "durationMinutes": 35,
+      "allowedIntesities": [
+        "low",
+        "high"
+      ]
     },
     {
       "type": "running",
@@ -54,7 +70,11 @@
       "secondaryStatWeight": 0.0,
       "baseGain": 5,
       "fatigueCost": 10,
-      "durationMinutes": 30
+      "durationMinutes": 30,
+      "allowedIntesities": [
+        "low",
+        "high"
+      ]
     },
     {
       "type": "cycling",
@@ -65,7 +85,11 @@
       "secondaryStatWeight": 0.2,
       "baseGain": 4,
       "fatigueCost": 8,
-      "durationMinutes": 40
+      "durationMinutes": 40,
+      "allowedIntesities": [
+        "medium",
+        "high"
+      ]
     },
     {
       "type": "rowing",
@@ -76,7 +100,11 @@
       "secondaryStatWeight": 0.3,
       "baseGain": 5,
       "fatigueCost": 12,
-      "durationMinutes": 35
+      "durationMinutes": 35,
+      "allowedIntesities": [
+        "low",
+        "high"
+      ]
     },
     {
       "type": "stretching",
@@ -87,7 +115,11 @@
       "secondaryStatWeight": 0.0,
       "baseGain": 3,
       "fatigueCost": 2,
-      "durationMinutes": 20
+      "durationMinutes": 20,
+      "allowedIntesities": [
+        "low",
+        "medium"
+      ]
     },
     {
       "type": "yoga_flow",
@@ -98,7 +130,11 @@
       "secondaryStatWeight": 0.3,
       "baseGain": 4,
       "fatigueCost": 5,
-      "durationMinutes": 25
+      "durationMinutes": 25,
+      "allowedIntesities": [
+        "low",
+        "high"
+      ]
     },
     {
       "type": "core_stability",
@@ -109,7 +145,11 @@
       "secondaryStatWeight": 0.3,
       "baseGain": 4,
       "fatigueCost": 6,
-      "durationMinutes": 25
+      "durationMinutes": 25,
+      "allowedIntesities": [
+        "low",
+        "high"
+      ]
     }
   ]
 }
