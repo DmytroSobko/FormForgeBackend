@@ -22,4 +22,3 @@ func ToAthleteResponse(a *athlete.Athlete) dto.AthleteResponse {
 		Week:       a.GetWeek(),
 	}
 }
-
