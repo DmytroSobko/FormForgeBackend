@@ -4,18 +4,19 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/DmytroSobko/FormForgeBackend/internal/configs"
+	"github.com/DmytroSobko/FormForgeBackend/internal/http/v1/mappers"
+	"github.com/DmytroSobko/FormForgeBackend/internal/simulation"
 )
 
 type SimulationConfigHandler struct {
-	Simulation *configs.SimulationConfigEnvelope
+	cfg simulation.Config
 }
 
 func NewSimulationConfigHandler(
-	simConfig *configs.SimulationConfigEnvelope,
+	cfg simulation.Config,
 ) *SimulationConfigHandler {
 	return &SimulationConfigHandler{
-		Simulation: simConfig,
+		cfg: cfg,
 	}
 }
 
@@ -23,8 +24,9 @@ func (h *SimulationConfigHandler) GetSimulationConfig(
 	w http.ResponseWriter,
 	r *http.Request,
 ) {
+	resp := mappers.ToSimulationConfigResponse(h.cfg)
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-
-	json.NewEncoder(w).Encode(h.Simulation)
+	_ = json.NewEncoder(w).Encode(resp)
 }
