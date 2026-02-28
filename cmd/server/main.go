@@ -9,56 +9,97 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/DmytroSobko/FormForgeBackend/internal/app"
+	"github.com/DmytroSobko/FormForgeBackend/internal/athlete"
 	"github.com/DmytroSobko/FormForgeBackend/internal/configs"
 	"github.com/DmytroSobko/FormForgeBackend/internal/db"
-	"github.com/DmytroSobko/FormForgeBackend/internal/simulation"
-
 	httpRouter "github.com/DmytroSobko/FormForgeBackend/internal/http"
+	"github.com/DmytroSobko/FormForgeBackend/internal/simulation"
 )
 
 func main() {
-	simConfigPath := "configs/simulation.v1.json"
-	simConfig, err := configs.LoadSimulationConfig(simConfigPath)
+	// -------------------------
+	// Load simulation config (domain)
+	// -------------------------
+
+	simCfg, simulationVersion, err := configs.LoadSimulationConfig("configs/simulation.v1.json")
 	if err != nil {
 		log.Fatalf("failed to load simulation config: %v", err)
 	}
 
-	athleteTypesConfigPath := "configs/athlete_types.v1.json"
-	athleteTypesConfig, err := configs.LoadAthleteTypes(athleteTypesConfigPath)
-	if err != nil {
-		log.Fatalf("failed to load athlete_types config: %v", err)
-	}
-
-	exercisesConfigPath := "configs/exercises.v1.json"
-	exercisesConfig, err := configs.LoadExercises(exercisesConfigPath)
+	exercises, exercisesVersion, err := configs.LoadExercises("configs/exercises.v1.json")
 	if err != nil {
 		log.Fatalf("failed to load exercises config: %v", err)
 	}
 
-	intensitiesConfigPath := "configs/intensities.v1.json"
-	intensitiesConfig, err := configs.LoadIntensities(intensitiesConfigPath)
+	intensities, intensitiesVersion, err := configs.LoadIntensities("configs/intensities.v1.json")
 	if err != nil {
-		log.Fatalf("failed to load intensity config: %v", err)
+		log.Fatalf("failed to load intensities config: %v", err)
 	}
 
-	simEngine := simulation.NewEngine(
-		&simConfig.Simulation,
-		intensitiesConfig.Intensities,
+	athleteTypes, athleteTypesVersion, err := configs.LoadAthleteTypes("configs/athlete_types.v1.json")
+	if err != nil {
+		log.Fatalf("failed to load athlete_types config: %v", err)
+	}
+
+	log.Printf("Loaded configs: simulation=%s exercises=%s intensities=%s athleteTypes=%s",
+		simulationVersion,
+		exercisesVersion,
+		intensitiesVersion,
+		athleteTypesVersion,
 	)
 
-	log.Printf("Loaded simulation config version %s", simConfig.Version)
+	// -------------------------
+	// Initialize DB
+	// -------------------------
 
 	cfg := db.LoadDBConfig()
 	database := db.Connect(cfg.DatabaseURL)
+	defer database.Close()
 
-	router := httpRouter.NewRouter(
-		database,
-		simConfig,
-		athleteTypesConfig,
-		exercisesConfig,
-		intensitiesConfig,
-		simEngine,
+	// -------------------------
+	// Initialize simulation engine
+	// -------------------------
+
+	simEngine := simulation.NewEngine(
+		simCfg,
+		intensities,
 	)
+
+	// -------------------------
+	// Initialize repository
+	// -------------------------
+
+	athleteRepo := athlete.NewPostgresRepository(database)
+
+	// -------------------------
+	// Initialize athlete service
+	// -------------------------
+
+	athleteService := athlete.NewService(
+		athleteRepo,
+		athleteTypes,
+	)
+
+	// -------------------------
+	// Build application dependencies
+	// -------------------------
+
+	deps := app.Dependencies{
+		DB:             database,
+		Engine:         simEngine,
+		Exercises:      exercises,
+		Intensities:    intensities,
+		AthleteTypes:   athleteTypes,
+		SimConfig:      simCfg,
+		AthleteService: athleteService,
+	}
+
+	// -------------------------
+	// Build router
+	// -------------------------
+
+	router := httpRouter.NewRouter(deps)
 
 	server := &http.Server{
 		Addr:         cfg.Port,
@@ -67,7 +108,10 @@ func main() {
 		WriteTimeout: 10 * time.Second,
 	}
 
-	// Run server in goroutine
+	// -------------------------
+	// Start server
+	// -------------------------
+
 	go func() {
 		log.Println("Server starting on", cfg.Port)
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
@@ -75,11 +119,14 @@ func main() {
 		}
 	}()
 
-	// Listen for shutdown signals
+	// -------------------------
+	// Graceful shutdown
+	// -------------------------
+
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
 
-	<-stop // wait for signal
+	<-stop
 
 	log.Println("Shutting down server...")
 
@@ -87,10 +134,8 @@ func main() {
 	defer cancel()
 
 	if err := server.Shutdown(ctx); err != nil {
-		log.Fatalf("Server shutdown failed: %v", err)
+		log.Fatalf("server shutdown failed: %v", err)
 	}
 
 	log.Println("Server stopped gracefully")
-
-	defer database.Close()
 }

@@ -1,21 +1,41 @@
 package configs
 
-import "fmt"
+import (
+	"fmt"
 
-func LoadSimulationConfig(path string) (*SimulationConfigEnvelope, error) {
-	var envelope SimulationConfigEnvelope
+	"github.com/DmytroSobko/FormForgeBackend/internal/simulation"
+)
 
-	if err := loadJSON(path, &envelope); err != nil {
-		return nil, err
+type SimulationConfigDTO struct {
+	RestDayRecovery      float64 `json:"restDayRecovery"`
+	MaxFatiguePenalty    float64 `json:"maxFatiguePenalty"`
+	HighFatigueThreshold float64 `json:"highFatigueThreshold"`
+}
+
+type SimulationConfigEnvelope struct {
+	Version    string              `json:"version"`
+	Simulation SimulationConfigDTO `json:"simulation"`
+}
+
+func LoadSimulationConfig(path string) (simulation.Config, string, error) {
+	var cfg SimulationConfigEnvelope
+
+	if err := loadJSON(path, &cfg); err != nil {
+		return simulation.Config{}, "", err
 	}
 
-	if envelope.Version == "" {
-		return nil, fmt.Errorf("simulation config missing version")
+	if cfg.Version == "" {
+		return simulation.Config{}, "", fmt.Errorf("simulation config missing version")
 	}
 
-	if err := envelope.Simulation.Validate(); err != nil {
-		return nil, err
+	domainCfg, err := simulation.NewConfig(
+		cfg.Simulation.RestDayRecovery,
+		cfg.Simulation.MaxFatiguePenalty,
+		cfg.Simulation.HighFatigueThreshold,
+	)
+	if err != nil {
+		return simulation.Config{}, "", err
 	}
 
-	return &envelope, nil
+	return domainCfg, cfg.Version, nil
 }
