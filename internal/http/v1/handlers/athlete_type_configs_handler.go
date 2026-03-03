@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/DmytroSobko/FormForgeBackend/internal/athlete"
@@ -13,27 +12,29 @@ type AthleteTypeConfigsHandler struct {
 	types []athlete.AthleteTypeConfig
 }
 
-func NewAthleteTypeConfigsHandler(
-	types []athlete.AthleteTypeConfig,
-) *AthleteTypeConfigsHandler {
-	return &AthleteTypeConfigsHandler{
-		types: types,
+func NewAthleteTypeConfigsHandler(types []athlete.AthleteTypeConfig) *AthleteTypeConfigsHandler {
+	return &AthleteTypeConfigsHandler{types: types}
+}
+
+func (h *AthleteTypeConfigsHandler) HandleAthleteTypeConfigs(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		h.getAthleteTypeConfigs(w, r)
+	default:
+		WriteError(w, http.StatusMethodNotAllowed, ErrInvalidRequest, "method not allowed")
 	}
 }
 
-func (h *AthleteTypeConfigsHandler) GetAthleteTypeConfigs(
-	w http.ResponseWriter,
-	r *http.Request,
-) {
-	athleteTypes := make([]dto.AthleteTypeConfig, 0, len(h.types))
+func (h *AthleteTypeConfigsHandler) getAthleteTypeConfigs(w http.ResponseWriter, _ *http.Request) {
+	configs := make([]dto.AthleteTypeConfig, len(h.types))
 
-	for _, t := range h.types {
-		athleteTypes = append(athleteTypes, mappers.ToAthleteTypeConfig(t))
+	for i, t := range h.types {
+		configs[i] = mappers.ToAthleteTypeConfig(t)
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(w).Encode(dto.AthleteTypeConfigsResponse{
-		AthleteTypes: athleteTypes,
-	})
+	response := dto.AthleteTypeConfigsResponse{
+		AthleteTypes: configs,
+	}
+
+	WriteJSON(w, http.StatusOK, response)
 }

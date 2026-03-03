@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/DmytroSobko/FormForgeBackend/internal/http/v1/dto"
@@ -13,27 +12,29 @@ type IntensitiesHandler struct {
 	intensities []simulation.Intensity
 }
 
-func NewIntensitiesHandler(
-	intensities []simulation.Intensity,
-) *IntensitiesHandler {
-	return &IntensitiesHandler{
-		intensities: intensities,
+func NewIntensitiesHandler(intensities []simulation.Intensity) *IntensitiesHandler {
+	return &IntensitiesHandler{intensities: intensities}
+}
+
+func (h *IntensitiesHandler) HandleIntensities(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		h.getIntensities(w, r)
+	default:
+		WriteError(w, http.StatusMethodNotAllowed, ErrInvalidRequest, "method not allowed")
 	}
 }
 
-func (h *IntensitiesHandler) GetIntensities(
-	w http.ResponseWriter,
-	r *http.Request,
-) {
-	intensities := make([]dto.IntensityConfig, 0, len(h.intensities))
+func (h *IntensitiesHandler) getIntensities(w http.ResponseWriter, _ *http.Request) {
+	configs := make([]dto.IntensityConfig, len(h.intensities))
 
-	for _, i := range h.intensities {
-		intensities = append(intensities, mappers.ToIntensityConfig(i))
+	for i, intensity := range h.intensities {
+		configs[i] = mappers.ToIntensityConfig(intensity)
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(w).Encode(dto.IntensityConfigsResponse{
-		Intensities: intensities,
-	})
+	response := dto.IntensityConfigsResponse{
+		Intensities: configs,
+	}
+
+	WriteJSON(w, http.StatusOK, response)
 }

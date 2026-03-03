@@ -1,14 +1,13 @@
 package simulation
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/DmytroSobko/FormForgeBackend/internal/athlete"
 )
 
 type Exercise struct {
-	Type                string
+	Type                ExerciseType
 	DisplayName         string
 	Description         string
 	PrimaryStat         athlete.StatType
@@ -31,11 +30,12 @@ func NewExercise(
 	durationMinutes int,
 ) (Exercise, error) {
 
-	if exType == "" {
-		return Exercise{}, errors.New("exercise type is empty")
+	t := ExerciseType(exType)
+
+	if !t.IsValid() {
+		return Exercise{}, fmt.Errorf("invalid exercise type: %s", exType)
 	}
 
-	// Convert string → StatType
 	ps := athlete.StatType(primaryStat)
 	if !ps.IsValid() {
 		return Exercise{}, fmt.Errorf("invalid primaryStat: %s", primaryStat)
@@ -67,7 +67,7 @@ func NewExercise(
 	}
 
 	return Exercise{
-		Type:                exType,
+		Type:                t,
 		DisplayName:         displayName,
 		Description:         description,
 		PrimaryStat:         ps,

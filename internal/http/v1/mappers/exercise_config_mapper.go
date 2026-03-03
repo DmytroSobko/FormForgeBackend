@@ -14,7 +14,7 @@ func ToExerciseConfig(e simulation.Exercise) dto.ExerciseConfig {
 	}
 
 	return dto.ExerciseConfig{
-		Type:                e.Type,
+		Type:                e.Type.String(),
 		DisplayName:         e.DisplayName,
 		Description:         e.Description,
 		PrimaryStat:         e.PrimaryStat.String(),

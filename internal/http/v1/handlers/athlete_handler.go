@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/DmytroSobko/FormForgeBackend/internal/athlete"
@@ -17,47 +16,35 @@ func NewAthleteHandler(service *athlete.Service) *AthleteHandler {
 	return &AthleteHandler{service: service}
 }
 
-func (h *AthleteHandler) CreateAthlete(w http.ResponseWriter, r *http.Request) {
-
-	if r.Method != http.MethodPost {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		return
+func (h *AthleteHandler) HandleAthletes(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodPost:
+		h.createAthlete(w, r)
+	default:
+		WriteError(w, http.StatusMethodNotAllowed, ErrInvalidRequest, "method not allowed")
 	}
+}
+
+func (h *AthleteHandler) createAthlete(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
 
 	var req dto.CreateAthleteRequest
-
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "invalid request body", http.StatusBadRequest)
+	if err := DecodeJSON(r, &req); err != nil {
+		WriteError(w, http.StatusBadRequest, ErrInvalidRequest, "invalid request body")
 		return
 	}
 
 	athleteType := athlete.AthleteType(req.Type)
-
 	if !athleteType.IsValid() {
-		http.Error(w, "invalid athlete type", http.StatusBadRequest)
+		WriteError(w, http.StatusBadRequest, ErrInvalidType, "invalid athlete type")
 		return
 	}
 
 	a, err := h.service.CreateAthlete(r.Context(), athleteType, req.Name)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		WriteError(w, http.StatusBadRequest, ErrInvalidRequest, err.Error())
 		return
 	}
 
-	resp := mappers.ToAthleteResponse(a)
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	_ = json.NewEncoder(w).Encode(resp)
-}
-
-func (h *AthleteHandler) HandleAthletes(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodPost:
-		h.CreateAthlete(w, r)
-	// case http.MethodGet:
-	// 	h.GetAthletes(w, r)
-	default:
-		w.WriteHeader(http.StatusMethodNotAllowed)
-	}
+	WriteJSON(w, http.StatusCreated, mappers.ToAthleteResponse(a))
 }
