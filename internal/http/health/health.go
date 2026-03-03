@@ -1,4 +1,4 @@
-package http
+package health
 
 import (
 	"net/http"
@@ -6,7 +6,7 @@ import (
 	"github.com/DmytroSobko/FormForgeBackend/internal/db"
 )
 
-func registerHealthRoutes(mux *http.ServeMux, database *db.DB) {
+func RegisterHealthRoutes(mux *http.ServeMux, database *db.DB) {
 	health := NewHealthHandler(database)
 
 	mux.HandleFunc("/health/live", health.Live)

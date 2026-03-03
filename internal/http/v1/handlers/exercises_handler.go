@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/DmytroSobko/FormForgeBackend/internal/http/v1/dto"
@@ -13,28 +12,29 @@ type ExercisesHandler struct {
 	exercises []simulation.Exercise
 }
 
-func NewExercisesHandler(
-	exercises []simulation.Exercise,
-) *ExercisesHandler {
-	return &ExercisesHandler{
-		exercises: exercises,
+func NewExercisesHandler(exercises []simulation.Exercise) *ExercisesHandler {
+	return &ExercisesHandler{exercises: exercises}
+}
+
+func (h *ExercisesHandler) HandleExercises(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		h.getExercises(w, r)
+	default:
+		WriteError(w, http.StatusMethodNotAllowed, ErrInvalidRequest, "method not allowed")
 	}
 }
 
-func (h *ExercisesHandler) GetExercises(
-	w http.ResponseWriter,
-	r *http.Request,
-) {
+func (h *ExercisesHandler) getExercises(w http.ResponseWriter, _ *http.Request) {
+	configs := make([]dto.ExerciseConfig, len(h.exercises))
 
-	exercises := make([]dto.ExerciseConfig, 0, len(h.exercises))
-
-	for _, e := range h.exercises {
-		exercises = append(exercises, mappers.ToExerciseConfig(e))
+	for i, e := range h.exercises {
+		configs[i] = mappers.ToExerciseConfig(e)
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(w).Encode(dto.ExerciseConfigsResponse{
-		Exercises: exercises,
-	})
+	response := dto.ExerciseConfigsResponse{
+		Exercises: configs,
+	}
+
+	WriteJSON(w, http.StatusOK, response)
 }

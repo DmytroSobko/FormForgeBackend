@@ -10,14 +10,14 @@ import (
 func registerConfigRoutes(mux *http.ServeMux, deps app.Dependencies) {
 
 	mux.HandleFunc("/config/simulation",
-		handlers.NewSimulationConfigHandler(deps.SimConfig).GetSimulationConfig)
+		handlers.NewSimulationConfigHandler(deps.SimConfig).HandleSimulationConfig)
 
 	mux.HandleFunc("/config/athleteTypes",
-		handlers.NewAthleteTypeConfigsHandler(deps.AthleteTypes).GetAthleteTypeConfigs)
+		handlers.NewAthleteTypeConfigsHandler(deps.AthleteTypes).HandleAthleteTypeConfigs)
 
 	mux.HandleFunc("/config/exercises",
-		handlers.NewExercisesHandler(deps.Exercises).GetExercises)
+		handlers.NewExercisesHandler(deps.Exercises).HandleExercises)
 
 	mux.HandleFunc("/config/intensities",
-		handlers.NewIntensitiesHandler(deps.Intensities).GetIntensities)
+		handlers.NewIntensitiesHandler(deps.Intensities).HandleIntensities)
 }
