@@ -12,7 +12,7 @@ import (
 func ToAthleteResponse(a *athlete.Athlete) dto.AthleteResponse {
 	return dto.AthleteResponse{
 		ID:         a.GetID(),
-		Type:       a.GetType().String(),
+		Type:       a.GetType(),
 		Name:       a.GetName(),
 		Strength:   a.GetStrength().Value(),
 		Endurance:  a.GetEndurance().Value(),
