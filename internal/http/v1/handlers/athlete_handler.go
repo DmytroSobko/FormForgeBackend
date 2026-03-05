@@ -36,19 +36,18 @@ func (h *AthleteHandler) createAthlete(w http.ResponseWriter, r *http.Request) {
 	var req dto.CreateAthleteRequest
 
 	if err := DecodeJSON(r, &req); err != nil {
-		WriteAppError(w, apperror.InvalidRequest("Invalid JSON body"))
+		WriteAppError(w, apperror.InvalidRequest(err.Error()))
 		return
 	}
 
-	athleteType := athlete.AthleteType(req.Type)
-	if !athleteType.IsValid() {
+	if !req.Type.IsValid() {
 		WriteAppError(w, apperror.Validation("Invalid athlete type"))
 		return
 	}
 
-	a, err := h.service.CreateAthlete(r.Context(), athleteType, req.Name)
+	a, err := h.service.CreateAthlete(r.Context(), req.Type, req.Name)
 	if err != nil {
-		WriteAppError(w, apperror.Internal("Failed to create athlete"))
+		WriteAppError(w, apperror.Internal(err.Error()))
 		return
 	}
 
