@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/DmytroSobko/FormForgeBackend/internal/apperror"
 	"github.com/DmytroSobko/FormForgeBackend/internal/athlete"
 	"github.com/DmytroSobko/FormForgeBackend/internal/http/v1/dto"
 	"github.com/DmytroSobko/FormForgeBackend/internal/http/v1/mappers"
@@ -20,8 +21,11 @@ func (h *AthleteTypeConfigsHandler) HandleAthleteTypeConfigs(w http.ResponseWrit
 	switch r.Method {
 	case http.MethodGet:
 		h.getAthleteTypeConfigs(w, r)
+
 	default:
-		WriteError(w, http.StatusMethodNotAllowed, ErrInvalidRequest, "method not allowed")
+		w.Header().Set("Allow", http.MethodGet)
+
+		WriteAppError(w, apperror.MethodNotAllowed("Method not allowed"))
 	}
 }
 

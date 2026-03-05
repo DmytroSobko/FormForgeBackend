@@ -28,15 +28,15 @@ func NewAthlete(
 ) (*Athlete, error) {
 
 	if id == "" {
-		return nil, errors.New("athlete id cannot be empty")
+		return nil, errors.New("Athlete id cannot be empty")
 	}
 
 	if name == "" {
-		return nil, errors.New("athlete name cannot be empty")
+		return nil, errors.New("Athlete name cannot be empty")
 	}
 
 	if !athleteType.IsValid() {
-		return nil, fmt.Errorf("invalid athlete type: %s", athleteType)
+		return nil, fmt.Errorf("Invalid athlete type: %s", athleteType)
 	}
 
 	str, err := NewStat(strength)
@@ -55,7 +55,7 @@ func NewAthlete(
 	}
 
 	if maxFatigue <= 0 {
-		return nil, errors.New("maxFatigue must be greater than 0")
+		return nil, errors.New("MaxFatigue must be greater than 0")
 	}
 
 	return &Athlete{

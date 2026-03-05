@@ -3,29 +3,33 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/DmytroSobko/FormForgeBackend/internal/apperror"
 	"github.com/DmytroSobko/FormForgeBackend/internal/http/v1/dto"
 	"github.com/DmytroSobko/FormForgeBackend/internal/http/v1/mappers"
 	"github.com/DmytroSobko/FormForgeBackend/internal/simulation"
 )
 
-type ExercisesHandler struct {
+type ExerciseConfigsHandler struct {
 	exercises []simulation.Exercise
 }
 
-func NewExercisesHandler(exercises []simulation.Exercise) *ExercisesHandler {
-	return &ExercisesHandler{exercises: exercises}
+func NewExercisesHandler(exercises []simulation.Exercise) *ExerciseConfigsHandler {
+	return &ExerciseConfigsHandler{exercises: exercises}
 }
 
-func (h *ExercisesHandler) HandleExercises(w http.ResponseWriter, r *http.Request) {
+func (h *ExerciseConfigsHandler) HandleExerciseConfigs(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
-		h.getExercises(w, r)
+		h.getExerciseConfigs(w, r)
+
 	default:
-		WriteError(w, http.StatusMethodNotAllowed, ErrInvalidRequest, "method not allowed")
+		w.Header().Set("Allow", http.MethodGet)
+
+		WriteAppError(w, apperror.MethodNotAllowed("Method not allowed"))
 	}
 }
 
-func (h *ExercisesHandler) getExercises(w http.ResponseWriter, _ *http.Request) {
+func (h *ExerciseConfigsHandler) getExerciseConfigs(w http.ResponseWriter, _ *http.Request) {
 	configs := make([]dto.ExerciseConfig, len(h.exercises))
 
 	for i, e := range h.exercises {

@@ -16,8 +16,8 @@ func registerConfigRoutes(mux *http.ServeMux, deps app.Dependencies) {
 		handlers.NewAthleteTypeConfigsHandler(deps.AthleteTypes).HandleAthleteTypeConfigs)
 
 	mux.HandleFunc("/config/exercises",
-		handlers.NewExercisesHandler(deps.Exercises).HandleExercises)
+		handlers.NewExercisesHandler(deps.Exercises).HandleExerciseConfigs)
 
 	mux.HandleFunc("/config/intensities",
-		handlers.NewIntensitiesHandler(deps.Intensities).HandleIntensities)
+		handlers.NewIntensitiesHandler(deps.Intensities).HandleIntensityConfigs)
 }
