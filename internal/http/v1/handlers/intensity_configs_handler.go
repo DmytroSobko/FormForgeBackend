@@ -3,29 +3,33 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/DmytroSobko/FormForgeBackend/internal/apperror"
 	"github.com/DmytroSobko/FormForgeBackend/internal/http/v1/dto"
 	"github.com/DmytroSobko/FormForgeBackend/internal/http/v1/mappers"
 	"github.com/DmytroSobko/FormForgeBackend/internal/simulation"
 )
 
-type IntensitiesHandler struct {
+type IntensityConfigsHandler struct {
 	intensities []simulation.Intensity
 }
 
-func NewIntensitiesHandler(intensities []simulation.Intensity) *IntensitiesHandler {
-	return &IntensitiesHandler{intensities: intensities}
+func NewIntensitiesHandler(intensities []simulation.Intensity) *IntensityConfigsHandler {
+	return &IntensityConfigsHandler{intensities: intensities}
 }
 
-func (h *IntensitiesHandler) HandleIntensities(w http.ResponseWriter, r *http.Request) {
+func (h *IntensityConfigsHandler) HandleIntensityConfigs(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
-		h.getIntensities(w, r)
+		h.getIntensityConfigs(w, r)
+
 	default:
-		WriteError(w, http.StatusMethodNotAllowed, ErrInvalidRequest, "method not allowed")
+		w.Header().Set("Allow", http.MethodGet)
+
+		WriteAppError(w, apperror.MethodNotAllowed("Method not allowed"))
 	}
 }
 
-func (h *IntensitiesHandler) getIntensities(w http.ResponseWriter, _ *http.Request) {
+func (h *IntensityConfigsHandler) getIntensityConfigs(w http.ResponseWriter, _ *http.Request) {
 	configs := make([]dto.IntensityConfig, len(h.intensities))
 
 	for i, intensity := range h.intensities {

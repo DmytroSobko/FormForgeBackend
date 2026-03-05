@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 
+	"github.com/DmytroSobko/FormForgeBackend/internal/apperror"
 	"github.com/DmytroSobko/FormForgeBackend/internal/athlete"
 	"github.com/DmytroSobko/FormForgeBackend/internal/http/v1/dto"
 	"github.com/DmytroSobko/FormForgeBackend/internal/http/v1/mappers"
@@ -20,29 +22,33 @@ func (h *AthleteHandler) HandleAthletes(w http.ResponseWriter, r *http.Request) 
 	switch r.Method {
 	case http.MethodPost:
 		h.createAthlete(w, r)
+
 	default:
-		WriteError(w, http.StatusMethodNotAllowed, ErrInvalidRequest, "method not allowed")
+		WriteAppError(w, apperror.MethodNotAllowed("Method not allowed"))
 	}
 }
 
 func (h *AthleteHandler) createAthlete(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
+	log.Printf("createAthlete started")
+
 	var req dto.CreateAthleteRequest
+
 	if err := DecodeJSON(r, &req); err != nil {
-		WriteError(w, http.StatusBadRequest, ErrInvalidRequest, "invalid request body")
+		WriteAppError(w, apperror.InvalidRequest("Invalid JSON body"))
 		return
 	}
 
 	athleteType := athlete.AthleteType(req.Type)
 	if !athleteType.IsValid() {
-		WriteError(w, http.StatusBadRequest, ErrInvalidType, "invalid athlete type")
+		WriteAppError(w, apperror.Validation("Invalid athlete type"))
 		return
 	}
 
 	a, err := h.service.CreateAthlete(r.Context(), athleteType, req.Name)
 	if err != nil {
-		WriteError(w, http.StatusBadRequest, ErrInvalidRequest, err.Error())
+		WriteAppError(w, apperror.Internal("Failed to create athlete"))
 		return
 	}
 

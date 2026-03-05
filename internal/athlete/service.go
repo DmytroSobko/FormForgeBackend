@@ -3,6 +3,7 @@ package athlete
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/google/uuid"
 )
@@ -29,10 +30,11 @@ func NewService(repo Repository, types []AthleteTypeConfig) *Service {
 }
 
 func (s *Service) CreateAthlete(ctx context.Context, athleteType AthleteType, name string) (*Athlete, error) {
+	log.Printf("CreateAthlete started: type=%s name=%s", athleteType, name)
 
 	t, ok := s.athleteTypes[athleteType]
 	if !ok {
-		return nil, fmt.Errorf("invalid athlete type: %s", athleteType)
+		return nil, fmt.Errorf("Invalid athlete type: %s", athleteType)
 	}
 
 	id := uuid.NewString()
@@ -47,12 +49,17 @@ func (s *Service) CreateAthlete(ctx context.Context, athleteType AthleteType, na
 		t.MaxFatigue,
 	)
 	if err != nil {
+		log.Println("NewAthlete failed")
+
 		return nil, err
 	}
 
 	if err := s.repo.Save(ctx, athlete); err != nil {
+		log.Println("Repo save failed")
 		return nil, err
 	}
+
+	log.Println("CreateAthlete: athlete created successfully")
 
 	return athlete, nil
 }
