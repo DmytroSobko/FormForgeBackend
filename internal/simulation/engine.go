@@ -56,9 +56,13 @@ func (e *Engine) SimulateWeek(
 			rawGain := ex.BaseGain * intensityCfg.Multiplier
 			finalGain := rawGain * (1 - penalty)
 
-			a.ApplyStat(ex.PrimaryStat, finalGain)
+			if err := a.ApplyStat(ex.PrimaryStat, finalGain); err != nil {
+				return nil, err
+			}
 
-			a.AddFatigue(ex.FatigueCost * intensityCfg.FatigueFactor)
+			if err := a.AddFatigue(ex.FatigueCost * intensityCfg.FatigueFactor); err != nil {
+				return nil, err
+			}
 
 			totalPotential += rawGain
 			totalActual += finalGain

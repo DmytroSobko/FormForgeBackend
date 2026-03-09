@@ -19,3 +19,5 @@ linters-settings:
 
   errcheck:
     check-type-assertions: true
+    exclude-functions:
+      - (net/http.ResponseWriter).Write

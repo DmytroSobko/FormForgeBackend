@@ -8,5 +8,5 @@ import (
 
 func registerSimulationRoutes(mux *http.ServeMux, deps app.Dependencies) {
 
-	//mux.HandleFunc("/simulate/week", NewSimulationHandler(deps.Engine).SimulateWeek)
+	// mux.HandleFunc("/simulate/week", NewSimulationHandler(deps.Engine).SimulateWeek)
 }
