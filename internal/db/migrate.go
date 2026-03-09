@@ -1,26 +1,31 @@
 package db
 
 import (
-	"log"
-
 	"github.com/DmytroSobko/FormForgeBackend/internal/logging"
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func RunMigrations(dbURL string) {
-	m, err := migrate.New("file:///app/migrations", dbURL)
+func RunMigrations(pool *pgxpool.Pool) error {
+	dbURL := pool.Config().ConnString()
 
+	m, err := migrate.New("file:///app/migrations", dbURL)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	defer m.Close()
 
-	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
-		log.Fatal(err)
+	if err := m.Up(); err != nil {
+		if err == migrate.ErrNoChange {
+			logging.Logger.Info("no migrations to apply")
+			return nil
+		}
+		return err
 	}
 
 	logging.Logger.Info("migrations applied successfully")
+	return nil
 }

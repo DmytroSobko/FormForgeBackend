@@ -52,11 +52,21 @@ func main() {
 	// -------------------------
 
 	cfg := db.LoadDBConfig()
-	logging.Logger.Info("running migrations...")
-	db.RunMigrations(cfg.DatabaseURL)
 	logging.Logger.Info("connecting to database...")
 	dbConn := db.Connect(cfg.DatabaseURL)
+
+	if dbConn == nil {
+		logging.Logger.Error("failed to connect to database")
+		os.Exit(1)
+	}
+
 	defer dbConn.Close()
+
+	logging.Logger.Info("running migrations...")
+	if err := db.RunMigrations(dbConn.Pool()); err != nil {
+		logging.Logger.Error("migration failed", "error", err)
+		os.Exit(1)
+	}
 
 	// -------------------------
 	// Initialize simulation engine

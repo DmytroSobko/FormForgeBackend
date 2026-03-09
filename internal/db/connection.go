@@ -80,3 +80,7 @@ func (d *DB) IsHealthy() bool {
 
 	return true
 }
+
+func (d *DB) Pool() *pgxpool.Pool {
+	return d.pool
+}

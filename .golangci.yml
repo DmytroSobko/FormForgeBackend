@@ -8,7 +8,14 @@ linters:
     - ineffassign
     - staticcheck
     - unused
+    - errcheck
+    - gocritic
+    - bodyclose
+    - gosec
 
 linters-settings:
   revive:
     severity: warning
+
+  errcheck:
+    check-type-assertions: true
