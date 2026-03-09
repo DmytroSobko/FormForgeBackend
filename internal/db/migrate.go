@@ -1,6 +1,8 @@
 package db
 
 import (
+	"errors"
+
 	"github.com/DmytroSobko/FormForgeBackend/internal/logging"
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
@@ -19,7 +21,7 @@ func RunMigrations(pool *pgxpool.Pool) error {
 	defer m.Close()
 
 	if err := m.Up(); err != nil {
-		if err == migrate.ErrNoChange {
+		if errors.Is(err, migrate.ErrNoChange) {
 			logging.Logger.Info("no migrations to apply")
 			return nil
 		}
