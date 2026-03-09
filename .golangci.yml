@@ -12,7 +12,10 @@ linters:
     - gocritic
     - bodyclose
     - gosec
-
+    - sqlclosecheck
+    - contextcheck
+    - errorlint
+    
 linters-settings:
   revive:
     severity: warning
