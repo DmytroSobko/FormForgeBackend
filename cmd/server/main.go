@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -14,39 +13,38 @@ import (
 	"github.com/DmytroSobko/FormForgeBackend/internal/configs"
 	"github.com/DmytroSobko/FormForgeBackend/internal/db"
 	httpRouter "github.com/DmytroSobko/FormForgeBackend/internal/http"
+	"github.com/DmytroSobko/FormForgeBackend/internal/logging"
 	"github.com/DmytroSobko/FormForgeBackend/internal/simulation"
 )
 
 func main() {
-	// -------------------------
-	// Load simulation config (domain)
-	// -------------------------
 
 	simCfg, simulationVersion, err := configs.LoadSimulationConfig("configs/simulation.v1.json")
 	if err != nil {
-		log.Fatalf("failed to load simulation config: %v", err)
+		logging.Logger.Error("failed to load simulation config", "error", err)
 	}
 
 	exercises, exercisesVersion, err := configs.LoadExercises("configs/exercises.v1.json")
 	if err != nil {
-		log.Fatalf("failed to load exercises config: %v", err)
+		logging.Logger.Error("failed to load exercises config", "error", err)
 	}
 
 	intensities, intensitiesVersion, err := configs.LoadIntensities("configs/intensities.v1.json")
 	if err != nil {
-		log.Fatalf("failed to load intensities config: %v", err)
+		logging.Logger.Error("failed to load intensities config", "error", err)
 	}
 
 	athleteTypes, athleteTypesVersion, err := configs.LoadAthleteTypes("configs/athlete_types.v1.json")
 	if err != nil {
-		log.Fatalf("failed to load athlete_types config: %v", err)
+		logging.Logger.Error("failed to load athlete_types config", "error", err)
 	}
 
-	log.Printf("Loaded configs: simulation=%s exercises=%s intensities=%s athleteTypes=%s",
-		simulationVersion,
-		exercisesVersion,
-		intensitiesVersion,
-		athleteTypesVersion,
+	logging.Logger.Info(
+		"configs loaded",
+		"simulation_version", simulationVersion,
+		"exercises_version", exercisesVersion,
+		"intensities_version", intensitiesVersion,
+		"athlete_types_version", athleteTypesVersion,
 	)
 
 	// -------------------------
@@ -54,8 +52,11 @@ func main() {
 	// -------------------------
 
 	cfg := db.LoadDBConfig()
-	database := db.Connect(cfg.DatabaseURL)
-	defer database.Close()
+	logging.Logger.Info("running migrations...")
+	db.RunMigrations(cfg.DatabaseURL)
+	logging.Logger.Info("connecting to database...")
+	dbConn := db.Connect(cfg.DatabaseURL)
+	defer dbConn.Close()
 
 	// -------------------------
 	// Initialize simulation engine
@@ -70,7 +71,7 @@ func main() {
 	// Initialize repository
 	// -------------------------
 
-	athleteRepo := athlete.NewPostgresRepository(database)
+	athleteRepo := athlete.NewPostgresRepository(dbConn)
 
 	// -------------------------
 	// Initialize athlete service
@@ -86,7 +87,7 @@ func main() {
 	// -------------------------
 
 	deps := app.Dependencies{
-		DB:             database,
+		DB:             dbConn,
 		Engine:         simEngine,
 		Exercises:      exercises,
 		Intensities:    intensities,
@@ -113,9 +114,9 @@ func main() {
 	// -------------------------
 
 	go func() {
-		log.Println("Server starting on", cfg.Port)
+		logging.Logger.Info("server starting", "port", cfg.Port)
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("listen error: %v", err)
+			logging.Logger.Error("server listen failed", "error", err)
 		}
 	}()
 
@@ -128,14 +129,14 @@ func main() {
 
 	<-stop
 
-	log.Println("Shutting down server...")
+	logging.Logger.Info("shutting down server...")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	if err := server.Shutdown(ctx); err != nil {
-		log.Fatalf("server shutdown failed: %v", err)
+		logging.Logger.Error("server shutdown failed", "error", err)
 	}
 
-	log.Println("Server stopped gracefully")
+	logging.Logger.Info("server stopped gracefully")
 }

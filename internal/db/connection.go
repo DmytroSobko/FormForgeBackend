@@ -2,10 +2,9 @@ package db
 
 import (
 	"context"
-	"log"
 	"time"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/DmytroSobko/FormForgeBackend/internal/logging"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -27,23 +26,41 @@ func Connect(databaseURL string) *DB {
 		if err == nil {
 			if err = pool.Ping(ctx); err == nil {
 				cancel()
-				log.Println("Connected to PostgreSQL")
+
+				logging.Logger.Info(
+					"connected to PostgreSQL",
+				)
+
 				return &DB{pool: pool}
 			}
+
+			pool.Close()
 		}
 
 		cancel()
 
-		log.Printf("DB not ready (attempt %d/%d), retrying...", i, maxRetries)
+		logging.Logger.Info(
+			"database not ready, retrying connection",
+			"attempt", i,
+			"max_attempts", maxRetries,
+			"error", err,
+		)
+
 		time.Sleep(2 * time.Second)
 	}
 
-	log.Fatalf("Unable to connect to DB after %d attempts: %v", maxRetries, err)
+	logging.Logger.Error(
+		"failed to connect to PostgreSQL after retries",
+		"max_attempts", maxRetries,
+		"error", err,
+	)
+
 	return nil
 }
 
 // Close gracefully shuts down the connection pool.
 func (d *DB) Close() {
+	logging.Logger.Info("closing database connection pool")
 	d.pool.Close()
 }
 
@@ -52,21 +69,14 @@ func (d *DB) IsHealthy() bool {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 
-	return d.pool.Ping(ctx) == nil
-}
+	err := d.pool.Ping(ctx)
+	if err != nil {
+		logging.Logger.Warn(
+			"database health check failed",
+			"error", err,
+		)
+		return false
+	}
 
-// Exec executes a query without returning rows.
-func (d *DB) Exec(ctx context.Context, query string, args ...any) error {
-	_, err := d.pool.Exec(ctx, query, args...)
-	return err
-}
-
-// Query executes a query that returns multiple rows.
-func (d *DB) Query(ctx context.Context, query string, args ...any) (pgx.Rows, error) {
-	return d.pool.Query(ctx, query, args...)
-}
-
-// QueryRow executes a query that returns a single row.
-func (d *DB) QueryRow(ctx context.Context, query string, args ...any) pgx.Row {
-	return d.pool.QueryRow(ctx, query, args...)
+	return true
 }

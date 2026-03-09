@@ -11,7 +11,7 @@ type Dependencies struct {
 
 	Engine *simulation.Engine
 
-	AthleteService *athlete.Service
+	AthleteService athlete.AthleteService
 
 	AthleteTypes []athlete.AthleteTypeConfig
 	Exercises    []simulation.Exercise

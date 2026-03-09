@@ -1,20 +1,24 @@
 package middleware
 
 import (
-	"log"
 	"net/http"
 	"runtime/debug"
+
+	"github.com/DmytroSobko/FormForgeBackend/internal/logging"
 )
 
-// RecoveryMiddleware prevents panics from crashing the server
 func RecoveryMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
 		defer func() {
 			if err := recover(); err != nil {
-				log.Printf(
-					"PANIC recovered: %v\n%s",
-					err,
-					debug.Stack(),
+
+				logger := logging.FromContext(r.Context())
+
+				logger.Error(
+					"panic recovered",
+					"error", err,
+					"stack", string(debug.Stack()),
 				)
 
 				http.Error(

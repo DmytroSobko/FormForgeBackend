@@ -1,11 +1,12 @@
 package handlers
 
 import (
+	"context"
 	"errors"
-	"log"
 	"net/http"
 
 	"github.com/DmytroSobko/FormForgeBackend/internal/apperror"
+	"github.com/DmytroSobko/FormForgeBackend/internal/logging"
 )
 
 type ErrorResponse struct {
@@ -13,7 +14,9 @@ type ErrorResponse struct {
 	Message string `json:"message"`
 }
 
-func WriteAppError(w http.ResponseWriter, err error) {
+func WriteAppError(ctx context.Context, w http.ResponseWriter, err error) {
+
+	logger := logging.FromContext(ctx)
 
 	var appErr *apperror.AppError
 
@@ -27,8 +30,10 @@ func WriteAppError(w http.ResponseWriter, err error) {
 		return
 	}
 
-	// fallback for unexpected errors
-	log.Printf("internal error: %v", err)
+	logger.Error(
+		"internal error",
+		"error", err,
+	)
 
 	WriteJSON(w, http.StatusInternalServerError, ErrorResponse{
 		Error:   "internal_error",

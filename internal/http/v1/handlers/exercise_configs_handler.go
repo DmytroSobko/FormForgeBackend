@@ -25,7 +25,7 @@ func (h *ExerciseConfigsHandler) HandleExerciseConfigs(w http.ResponseWriter, r 
 	default:
 		w.Header().Set("Allow", http.MethodGet)
 
-		WriteAppError(w, apperror.MethodNotAllowed("Method not allowed"))
+		WriteAppError(r.Context(), w, apperror.MethodNotAllowed("Method not allowed"))
 	}
 }
 

@@ -1,8 +1,9 @@
 package db
 
 import (
-	"log"
 	"os"
+
+	"github.com/DmytroSobko/FormForgeBackend/internal/logging"
 )
 
 type DBConfig struct {
@@ -13,12 +14,13 @@ type DBConfig struct {
 func LoadDBConfig() DBConfig {
 	port := os.Getenv("PORT")
 	if port == "" {
-		log.Fatal("PORT is not set")
+		port = ":8080"
 	}
 
 	dbURL := os.Getenv("DATABASE_URL")
 	if dbURL == "" {
-		log.Fatal("DATABASE_URL is not set")
+		logging.Logger.Error("environment variable missing", "name", "DATABASE_URL")
+		os.Exit(1)
 	}
 
 	return DBConfig{

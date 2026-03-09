@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/DmytroSobko/FormForgeBackend/internal/db"
+	"github.com/DmytroSobko/FormForgeBackend/internal/logging"
 )
 
 type PostgresRepository struct {
@@ -16,9 +17,13 @@ func NewPostgresRepository(db *db.DB) *PostgresRepository {
 
 func (r *PostgresRepository) Save(ctx context.Context, a *Athlete) error {
 
+	logger := logging.FromContext(ctx)
+
+	logger.Info("saving athlete", "id", a.GetID())
+
 	query := `
 		INSERT INTO athletes (
-			id, type, name,
+			id, athlete_type, name,
 			strength, endurance, mobility,
 			fatigue, max_fatigue, week
 		)

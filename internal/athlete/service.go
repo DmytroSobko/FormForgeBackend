@@ -3,8 +3,8 @@ package athlete
 import (
 	"context"
 	"fmt"
-	"log"
 
+	"github.com/DmytroSobko/FormForgeBackend/internal/logging"
 	"github.com/google/uuid"
 )
 
@@ -12,12 +12,16 @@ type Repository interface {
 	Save(ctx context.Context, a *Athlete) error
 }
 
+type AthleteService interface {
+	CreateAthlete(ctx context.Context, athleteType AthleteType, name string) (*Athlete, error)
+}
+
 type Service struct {
 	repo         Repository
 	athleteTypes map[AthleteType]AthleteTypeConfig
 }
 
-func NewService(repo Repository, types []AthleteTypeConfig) *Service {
+func NewService(repo Repository, types []AthleteTypeConfig) AthleteService {
 	m := make(map[AthleteType]AthleteTypeConfig)
 	for _, t := range types {
 		m[t.Type] = t
@@ -30,36 +34,63 @@ func NewService(repo Repository, types []AthleteTypeConfig) *Service {
 }
 
 func (s *Service) CreateAthlete(ctx context.Context, athleteType AthleteType, name string) (*Athlete, error) {
-	log.Printf("CreateAthlete started: type=%s name=%s", athleteType, name)
+	logger := logging.FromContext(ctx)
 
-	t, ok := s.athleteTypes[athleteType]
+	logger.Info(
+		"create athlete started",
+		"type", athleteType,
+		"name", name,
+	)
+
+	cfg, ok := s.athleteTypes[athleteType]
 	if !ok {
-		return nil, fmt.Errorf("Invalid athlete type: %s", athleteType)
+		err := fmt.Errorf("unknown athlete type: %s", athleteType)
+
+		logger.Warn(
+			"invalid athlete type requested",
+			"type", athleteType,
+		)
+
+		return nil, err
 	}
 
 	id := uuid.NewString()
 
 	athlete, err := NewAthlete(
 		id,
-		t.Type,
+		cfg.Type,
 		name,
-		t.BaseStats.Strength.Value(),
-		t.BaseStats.Endurance.Value(),
-		t.BaseStats.Mobility.Value(),
-		t.MaxFatigue,
+		cfg.BaseStats.Strength.Value(),
+		cfg.BaseStats.Endurance.Value(),
+		cfg.BaseStats.Mobility.Value(),
+		cfg.MaxFatigue,
 	)
-	if err != nil {
-		log.Println("NewAthlete failed")
 
+	if err != nil {
+		logger.Error(
+			"failed to create athlete entity",
+			"error", err,
+			"type", athleteType,
+			"name", name,
+		)
 		return nil, err
 	}
 
 	if err := s.repo.Save(ctx, athlete); err != nil {
-		log.Println("Repo save failed")
+		logger.Error(
+			"failed to persist athlete",
+			"error", err,
+			"id", athlete.ID,
+		)
 		return nil, err
 	}
 
-	log.Println("CreateAthlete: athlete created successfully")
+	logger.Info(
+		"athlete created",
+		"id", athlete.ID,
+		"type", athlete.Type,
+		"name", athlete.Name,
+	)
 
 	return athlete, nil
 }
