@@ -5,10 +5,6 @@ import (
 	"github.com/DmytroSobko/FormForgeBackend/internal/http/v1/dto"
 )
 
-// -----------------------------
-// Athlete → AthleteResponse
-// -----------------------------
-
 func ToAthleteResponse(a *athlete.Athlete) dto.AthleteResponse {
 	return dto.AthleteResponse{
 		ID:         a.GetID(),

@@ -11,6 +11,21 @@ jobs:
     name: Go Backend Checks
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: formforge
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -33,14 +48,31 @@ jobs:
           go fmt ./...
           git diff --exit-code
 
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: latest
+
       - name: Go vet
         run: go vet ./...
 
-      - name: Run tests with race detector
+      - name: Install migrate
+        run: |
+          curl -L https://github.com/golang-migrate/migrate/releases/latest/download/migrate.linux-amd64.tar.gz | tar xvz
+          sudo mv migrate /usr/local/bin
+
+      - name: Run migrations
+        run: |
+          migrate \
+            -path migrations \
+            -database "postgres://postgres:postgres@localhost:5432/formforge?sslmode=disable" \
+            up
+
+      - name: Run tests
         run: go test -race ./...
 
       - name: Build server
         run: go build ./cmd/server
 
-      - name: Docker build (sanity check)
+      - name: Docker build
         run: docker build -t formforge-backend .

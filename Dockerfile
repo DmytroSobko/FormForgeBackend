@@ -7,11 +7,14 @@ RUN apk add --no-cache git
 
 WORKDIR /app
 
+# Cache dependencies
 COPY go.mod go.sum ./
 RUN go mod download
 
+# Copy source code
 COPY . .
 
+# Build binary
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
     go build -o server ./cmd/server
 
@@ -20,13 +23,13 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
 # =========================
 FROM gcr.io/distroless/base-debian12
 
-# IMPORTANT: match runtime working directory
+# Match runtime working directory
 WORKDIR /app
 
-# Copy the compiled binary
+# Copy runtime artifacts
 COPY --from=builder /app/server ./server
-
 COPY --from=builder /app/configs ./configs
+COPY --from=builder /app/migrations ./migrations
 
 EXPOSE 8080
 

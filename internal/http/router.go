@@ -16,8 +16,12 @@ func NewRouter(deps app.Dependencies) http.Handler {
 
 	routes.RegisterRoutes(rootMux, deps)
 
-	handler := middleware.LoggingMiddleware(rootMux)
-	handler = middleware.RecoveryMiddleware(handler)
+	handler := middleware.Chain(
+		rootMux,
+		middleware.RecoveryMiddleware,
+		middleware.RequestIDMiddleware,
+		middleware.LoggingMiddleware,
+	)
 
 	return handler
 }

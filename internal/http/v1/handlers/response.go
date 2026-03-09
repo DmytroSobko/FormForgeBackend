@@ -10,11 +10,11 @@ import (
 )
 
 // WriteJSON writes a JSON response with the given HTTP status code.
-func WriteJSON(w http.ResponseWriter, status int, v any) {
+func WriteJSON(w http.ResponseWriter, status int, payload any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 
-	if err := json.NewEncoder(w).Encode(v); err != nil {
+	if err := json.NewEncoder(w).Encode(payload); err != nil {
 		// If JSON encoding fails, fall back to a plain 500 error
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 	}

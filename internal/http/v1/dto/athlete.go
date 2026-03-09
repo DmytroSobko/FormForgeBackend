@@ -5,8 +5,8 @@ import (
 )
 
 type CreateAthleteRequest struct {
-	Type athlete.AthleteType `json:"type"`
-	Name string              `json:"name"`
+	Type athlete.AthleteType `json:"type" validate:"required"`
+	Name string              `json:"name" validate:"required,min=2,max=50"`
 }
 
 type AthleteResponse struct {

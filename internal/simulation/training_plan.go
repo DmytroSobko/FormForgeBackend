@@ -7,10 +7,6 @@ import (
 
 const DaysInWeek = 7
 
-// ------------------------------------------------------
-// Domain Types
-// ------------------------------------------------------
-
 type TrainingPlan struct {
 	ID        string
 	AthleteID string
@@ -26,10 +22,6 @@ type PlannedExercise struct {
 	Exercise  Exercise
 	Intensity IntensityType
 }
-
-// ------------------------------------------------------
-// Constructors
-// ------------------------------------------------------
 
 func NewEmptyTrainingPlan(id string, athleteID string) (*TrainingPlan, error) {
 
@@ -57,10 +49,6 @@ func NewEmptyTrainingPlan(id string, athleteID string) (*TrainingPlan, error) {
 	}, nil
 }
 
-// ------------------------------------------------------
-// Getters
-// ------------------------------------------------------
-
 func (p *TrainingPlan) GetID() string {
 	return p.ID
 }
@@ -80,10 +68,6 @@ func (d *TrainingDay) GetDayIndex() int {
 func (d *TrainingDay) GetExercises() []PlannedExercise {
 	return d.Exercises
 }
-
-// ------------------------------------------------------
-// Behavior
-// ------------------------------------------------------
 
 func (p *TrainingPlan) AddExercise(dayIndex int, exercise Exercise, intensity IntensityType) error {
 

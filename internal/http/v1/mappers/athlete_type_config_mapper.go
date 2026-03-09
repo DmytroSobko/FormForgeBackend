@@ -5,10 +5,6 @@ import (
 	"github.com/DmytroSobko/FormForgeBackend/internal/http/v1/dto"
 )
 
-// -----------------------------
-// AthleteTypeConfig → AthleteTypeResponse
-// -----------------------------
-
 func ToAthleteTypeConfig(t athlete.AthleteTypeConfig) dto.AthleteTypeConfig {
 	return dto.AthleteTypeConfig{
 		Type:        t.Type.String(),
