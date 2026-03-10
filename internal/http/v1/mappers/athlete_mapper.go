@@ -18,3 +18,13 @@ func ToAthleteResponse(a *athlete.Athlete) dto.AthleteResponse {
 		Week:       a.GetWeek(),
 	}
 }
+
+func ToAthleteResponses(athletes []*athlete.Athlete) []dto.AthleteResponse {
+	resp := make([]dto.AthleteResponse, 0, len(athletes))
+
+	for _, a := range athletes {
+		resp = append(resp, ToAthleteResponse(a))
+	}
+
+	return resp
+}

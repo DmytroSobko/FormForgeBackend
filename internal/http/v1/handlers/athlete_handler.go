@@ -5,6 +5,7 @@ import (
 
 	"github.com/DmytroSobko/FormForgeBackend/internal/apperror"
 	"github.com/DmytroSobko/FormForgeBackend/internal/athlete"
+	"github.com/DmytroSobko/FormForgeBackend/internal/http/pagination"
 	"github.com/DmytroSobko/FormForgeBackend/internal/http/v1/dto"
 	"github.com/DmytroSobko/FormForgeBackend/internal/http/v1/mappers"
 	"github.com/DmytroSobko/FormForgeBackend/internal/logging"
@@ -22,6 +23,9 @@ func (h *AthleteHandler) HandleAthletes(w http.ResponseWriter, r *http.Request) 
 	switch r.Method {
 	case http.MethodPost:
 		h.createAthlete(w, r)
+
+	case http.MethodGet:
+		h.getAthletes(w, r)
 
 	default:
 		WriteAppError(r.Context(), w, apperror.MethodNotAllowed("Method not allowed"))
@@ -61,4 +65,28 @@ func (h *AthleteHandler) createAthlete(w http.ResponseWriter, r *http.Request) {
 	)
 
 	WriteJSON(w, http.StatusCreated, mappers.ToAthleteResponse(a))
+}
+
+func (h *AthleteHandler) getAthletes(w http.ResponseWriter, r *http.Request) {
+	logger := logging.FromContext(r.Context())
+
+	logger.Info("get athletes request started")
+	pagination := pagination.ParsePagination(r)
+
+	athletes, err := h.service.GetAthletes(
+		r.Context(),
+		pagination.Limit,
+		pagination.Offset,
+	)
+
+	if err != nil {
+		WriteAppError(r.Context(), w, apperror.Internal(err.Error()))
+		return
+	}
+
+	resp := dto.AthletesResponse{
+		Athletes: mappers.ToAthleteResponses(athletes),
+	}
+
+	WriteJSON(w, http.StatusOK, resp)
 }
