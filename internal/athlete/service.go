@@ -10,10 +10,12 @@ import (
 
 type Repository interface {
 	Save(ctx context.Context, a *Athlete) error
+	GetAthletes(ctx context.Context, limit, offset int) ([]*Athlete, error)
 }
 
 type AthleteService interface {
 	CreateAthlete(ctx context.Context, athleteType AthleteType, name string) (*Athlete, error)
+	GetAthletes(ctx context.Context, limit, offset int) ([]*Athlete, error)
 }
 
 type Service struct {
@@ -93,4 +95,27 @@ func (s *Service) CreateAthlete(ctx context.Context, athleteType AthleteType, na
 	)
 
 	return athlete, nil
+}
+
+func (s *Service) GetAthletes(ctx context.Context, limit, offset int) ([]*Athlete, error) {
+	logger := logging.FromContext(ctx)
+
+	logger.Info(
+		"get athletes started",
+		"limit", limit,
+		"offset", offset,
+	)
+
+	athletes, err := s.repo.GetAthletes(ctx, limit, offset)
+	if err != nil {
+		logger.Error("failed to fetch athletes", "error", err)
+		return nil, err
+	}
+
+	logger.Info(
+		"athletes fetched",
+		"count", len(athletes),
+	)
+
+	return athletes, nil
 }
